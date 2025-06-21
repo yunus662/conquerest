@@ -17,7 +17,7 @@ const firebaseConfig = {
   storageBucket: "conquerorauth.firebasestorage.app",
   messagingSenderId: "679847369965",
   appId: "1:679847369965:web:68662e04e57c4b40d380e4",
-  measurementId: "G-D05994C1CP"
+  measurementId: "G-D05994C1CP",
 };
 
 // 🚀 Initialize Firebase
