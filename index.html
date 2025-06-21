@@ -3,224 +3,191 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Conquerest - Command Your Empire</title>
-  
+  <title>Conquerest</title>
   <style>
-    /* Reset & Base Styles */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Arial', sans-serif;
-      color: #ddd;
-      background: #111;
-      line-height: 1.6;
+    :root {
+      --dark: #141416;
+      --accent: #e74c3c;
+      --light: #f0f0f0;
+      --border: #2c2c2e;
     }
-    a { text-decoration: none; color: inherit; }
-
-    /* Navigation Bar */
-    nav {
-      position: fixed;
-      top: 0;
-      right: 0;
-      padding: 15px 30px;
-      z-index: 10;
+    * {
+      box-sizing: border-box;
     }
-    nav button {
-      background: transparent;
-      border: 2px solid #fff;
-      color: #fff;
-      padding: 8px 15px;
-      margin-left: 15px;
-      cursor: pointer;
-      transition: background 0.25s, color 0.25s;
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--dark);
+      color: var(--light);
     }
-    nav button:hover {
-      background: #fff;
-      color: #111;
-    }
-
-    /* Hero Section: full screen war-themed background */
-    .hero {
+    header.hero {
       position: relative;
-      width: 100%;
       height: 100vh;
-      background: url('https://source.unsplash.com/1600x900/?war,military') no-repeat center center;
-      background-size: cover;
+      background: url('https://source.unsplash.com/1920x1080/?war,battlefield') center center / cover no-repeat;
     }
-    .hero::after {
+    header.hero::after {
       content: "";
       position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
     }
     .hero-content {
       position: relative;
       z-index: 2;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
       text-align: center;
-      padding: 0 20px;
+      padding-top: 25vh;
     }
-    .hero h1 {
-      font-size: 4em;
-      letter-spacing: 2px;
-      margin-bottom: 20px;
-      text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+    .hero-content h1 {
+      font-size: 3.5em;
+      margin-bottom: 0.5em;
     }
-    .hero p {
-      font-size: 1.5em;
-      margin-bottom: 40px;
-      text-shadow: 1px 1px 6px rgba(0,0,0,0.8);
+    .hero-content p {
+      font-size: 1.2em;
+      opacity: 0.9;
     }
-    .btn {
-      padding: 15px 30px;
-      font-size: 1.1em;
+    .hero-buttons {
+      margin-top: 2em;
+    }
+    .hero-buttons button {
+      background: var(--accent);
+      color: white;
       border: none;
-      border-radius: 5px;
+      padding: 12px 24px;
+      margin: 0 10px;
+      font-size: 1em;
       cursor: pointer;
-      transition: transform 0.25s, background 0.25s;
-      margin: 10px;
-      letter-spacing: 1px;
+      border-radius: 4px;
+      transition: background 0.3s;
     }
-    .btn-login {
-      background: #e74c3c;
-      color: #fff;
-    }
-    .btn-login:hover {
+    .hero-buttons button:hover {
       background: #c0392b;
-      transform: scale(1.05);
     }
-    .btn-discover {
-      background: #34495e;
-      color: #fff;
+    nav.main-nav {
+      display: none;
+      background: #1f1f22;
+      border-bottom: 1px solid var(--border);
+      padding: 15px 30px;
     }
-    .btn-discover:hover {
-      background: #2c3e50;
-      transform: scale(1.05);
+    nav.main-nav ul {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+      margin: 0;
+      padding: 0;
     }
-
-    /* Lobbies Section */
-    .lobbies-section {
-      padding: 50px 20px;
-      background: #1a1a1a;
+    nav.main-nav li {
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--light);
     }
-    .lobbies-section h2 {
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 2.5em;
-      letter-spacing: 1px;
+    nav.main-nav li:hover {
+      text-decoration: underline;
     }
-    .lobby-list {
-      max-width: 1200px;
-      margin: 0 auto;
+    section.lobbies {
+      padding: 60px 40px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 20px;
     }
     .lobby-card {
-      background: #222;
-      border: 1px solid #444;
+      background: #1d1d1f;
+      border: 1px solid var(--border);
       border-radius: 8px;
       padding: 20px;
-      text-align: center;
-      transition: transform 0.25s;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-    .lobby-card:hover { transform: scale(1.03); }
     .lobby-card h3 {
-      font-size: 1.8em;
-      margin-bottom: 15px;
-      color: #fff;
+      margin-top: 0;
+      font-size: 1.5em;
     }
     .lobby-card p {
-      margin: 5px 0;
-      color: #bbb;
+      margin: 6px 0;
+      color: #ccc;
     }
     .lobby-card button {
       margin-top: 15px;
-      padding: 10px 20px;
-      background: #e74c3c;
-      border: none;
-      border-radius: 5px;
+      background: var(--accent);
       color: #fff;
+      border: none;
+      padding: 10px;
+      border-radius: 4px;
       cursor: pointer;
-      transition: background 0.25s, transform 0.25s;
     }
     .lobby-card button:hover {
       background: #c0392b;
-      transform: scale(1.05);
     }
-
-    /* Player Stats Section */
-    .player-stats {
-      padding: 30px;
-      background: #1a1a1a;
+    footer {
       text-align: center;
+      padding: 20px;
+      color: #777;
+      border-top: 1px solid var(--border);
     }
   </style>
 </head>
 <body>
-  <!-- Navigation Bar -->
-  <nav>
-    <button onclick="login()">Login</button>
-  </nav>
-  
-  <!-- Hero Section -->
-  <section class="hero">
+  <header class="hero">
     <div class="hero-content">
       <h1>Conquerest</h1>
-      <p>Command Your Empire. Lead Your Forces into Battle.</p>
-      <button class="btn btn-login" onclick="login()">Login with Google</button>
-      <button class="btn btn-discover" onclick="scrollToLobbies()">Discover Lobbies</button>
+      <p>Forge alliances. Command armies. Rewrite history.</p>
+      <div class="hero-buttons">
+        <button onclick="login()">Login with Google</button>
+        <button onclick="scrollToLobbies()">View Lobbies</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="main-nav" id="main-nav">
+    <ul>
+      <li onclick="scrollToLobbies()">Lobbies</li>
+      <li onclick="alert('Conquerest is built by the Bestdominion team.')">Creator</li>
+      <li onclick="alert('Contact us at contact@conquerest.dev')">Contact</li>
+      <li onclick="alert('Conquerest is a global strategy game.')">About</li>
+    </ul>
+  </nav>
+
+  <section class="lobbies" id="lobbies-section">
+    <div id="lobby-list">
+      <p id="lobby-status" style="color: #999;">Loading lobbies...</p>
     </div>
   </section>
-  
-  <!-- Lobbies Section -->
-  <section class="lobbies-section" id="lobbies-section">
-    <h2>Latest Lobbies</h2>
-    <div id="lobby-list" class="lobby-list">
-      <p id="lobby-status" style="color:#e74c3c; text-align:center;">Loading lobbies...</p>
-    </div>
-  </section>
-  
-  <!-- Player Stats Section -->
-  <section class="player-stats" id="player-stats">
-    <p>Not logged in. Please login to see your stats.</p>
-  </section>
-  
-  <!-- Firebase & Module Imports -->
-  
-  <!-- Player-System Module -->
+
+  <footer>
+    &copy; 2025 Conquerest. All rights reserved.
+  </footer>
+
+  <!-- Firebase Login + Stats -->
   <script type="module">
     import { loginWithGoogle, renderPlayerStats } from "./player-system.js";
-    window.login = async function() {
+    window.login = async () => {
       try {
         const user = await loginWithGoogle();
         if (user) {
+          document.getElementById("main-nav").style.display = "block";
           alert(`Welcome, ${user.displayName}!`);
           renderPlayerStats("player-stats");
         }
-      } catch (error) {
-        console.error("Login error:", error);
+      } catch (err) {
+        console.error("Login failed:", err);
       }
     };
   </script>
-  
-  <!-- Lobbies Module -->
+
+  <!-- Lobby Logic -->
   <script type="module">
     import { fetchLobbies, joinLobby } from "./lobbies.js";
-    
+
     async function displayLobbies() {
-      const lobbyListContainer = document.getElementById("lobby-list");
-      const lobbyStatus = document.getElementById("lobby-status");
-      lobbyListContainer.innerHTML = "";
+      const container = document.getElementById("lobby-list");
+      const status = document.getElementById("lobby-status");
+      container.innerHTML = "";
       try {
         const lobbies = await fetchLobbies();
         if (lobbies.length === 0) {
-          lobbyStatus.textContent = "No lobbies available.";
+          status.textContent = "No active lobbies.";
           return;
         }
         lobbies.forEach(lobby => {
@@ -228,23 +195,23 @@
           card.className = "lobby-card";
           card.innerHTML = `
             <h3>${lobby.lobbyName}</h3>
-            <p><strong>Start Time:</strong> ${lobby.startTime}</p>
-            <p><strong>In-Game Year:</strong> ${lobby.inGameYear}</p>
+            <p><strong>Start:</strong> ${lobby.startTime}</p>
+            <p><strong>Year:</strong> ${lobby.inGameYear}</p>
             <p><strong>Players:</strong> ${lobby.playersCount}</p>
             <button onclick="window.joinLobby('${lobby.id}')">Join Lobby</button>
           `;
-          lobbyListContainer.appendChild(card);
+          container.appendChild(card);
         });
-      } catch (error) {
-        lobbyStatus.textContent = "Error loading lobbies.";
-        console.error("Error in displayLobbies:", error);
+      } catch (err) {
+        status.textContent = "Failed to load lobbies.";
+        console.error("displayLobbies:", err);
       }
     }
+
     window.joinLobby = joinLobby;
     window.addEventListener("load", displayLobbies);
   </script>
-  
-  <!-- Helper: Scroll to Lobbies Section -->
+
   <script>
     function scrollToLobbies() {
       document.getElementById("lobbies-section").scrollIntoView({ behavior: 'smooth' });
@@ -252,4 +219,5 @@
   </script>
 </body>
 </html>
+
 
