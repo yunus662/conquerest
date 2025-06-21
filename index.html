@@ -2,137 +2,169 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Conquerest | Command Lobby</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <title>Conquerest Command Center</title>
+  
+  <!-- Leaflet CSS for map rendering -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- Inline CSS for an old school military UI -->
   <style>
     body {
+      background: #1b1b1b;
+      color: #cfc;
+      font-family: 'Courier New', Courier, monospace;
       margin: 0;
-      font-family: 'Share Tech Mono', monospace;
-      background: #0a0f14;
-      color: #00ffcc;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+      padding: 0;
     }
-
     header {
-      background: #121820;
-      padding: 1em 2em;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid #00ffcc33;
-    }
-
-    header .nav-link {
-      color: #00ffcc;
-      text-decoration: none;
-      margin: 0 1em;
-      text-transform: uppercase;
-    }
-
-    .console {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2em;
-    }
-
-    .command-box {
-      background: rgba(0, 255, 204, 0.05);
-      border: 2px solid #00ffcc44;
-      padding: 2em;
-      border-radius: 12px;
-      box-shadow: 0 0 40px #00ffcc22;
-      width: 100%;
-      max-width: 480px;
+      background: #222;
       text-align: center;
+      padding: 10px 0;
+      border-bottom: 2px solid #5a5;
     }
-
-    h1 {
+    header h1 {
+      margin: 0;
       font-size: 2em;
-      margin-bottom: 0.2em;
-      color: #00ffd0;
+      color: #0f0;
     }
-
-    .tagline {
-      font-size: 1em;
-      margin-bottom: 1.5em;
-      color: #00ffccaa;
+    nav.navbar {
+      display: flex;
+      justify-content: center;
+      background: #333;
+      padding: 10px;
+      border-bottom: 2px solid #5a5;
     }
-
-    input, button {
-      width: 100%;
-      padding: 0.7em;
-      margin: 0.4em 0;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 1em;
-      background: #121820;
-      border: 1px solid #00ffcc66;
-      color: #00ffcc;
-      border-radius: 6px;
-    }
-
-    button {
-      background: #00ffcc22;
+    nav.navbar button {
+      background: #444;
+      border: none;
+      color: #cfc;
+      padding: 10px 15px;
+      margin: 0 5px;
       cursor: pointer;
-      font-weight: bold;
-      transition: 0.2s ease;
+      font-size: 16px;
+      border-radius: 4px;
     }
-
-    button:hover {
-      background: #00ffcc55;
+    nav.navbar button:hover {
+      background: #555;
     }
-
-    footer {
-      text-align: center;
-      font-size: 0.8em;
-      color: #00ffcc66;
-      padding: 1em;
-      border-top: 1px solid #00ffcc22;
+    #game-container {
+      padding: 20px;
+    }
+    /* Sections */
+    section {
+      display: none;
+      padding: 10px;
+    }
+    section.active {
+      display: block;
+    }
+    /* HUD styling for player stats and shop */
+    #player-stats {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: #111;
+      color: #0f0;
+      border: 2px solid #3af;
+      padding: 10px;
+      border-radius: 6px;
+      font-family: monospace;
+    }
+    #reward-shop {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #222;
+      color: #fff;
+      border: 2px solid #3af;
+      padding: 10px;
+      border-radius: 6px;
+      font-family: sans-serif;
+      font-size: 14px;
+    }
+    /* Popup animation */
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
     }
   </style>
 </head>
 <body>
   <header>
-    <div><strong>Conquerest HQ</strong></div>
-    <nav>
-      <a class="nav-link" href="about.html">About</a>
-      <a class="nav-link" href="contact.html">Contact</a>
-      <a class="nav-link" href="forum.html">Forum</a>
-    </nav>
+    <h1>Conquerest Command Center</h1>
   </header>
-
-  <div class="console">
-    <div class="command-box">
-      <h1>🌐 CONQUEREST</h1>
-      <div class="tagline">Tactical Warfare Simulation Interface</div>
-      <button onclick="createGame()">➤ Start New Campaign</button>
-      <input id="join-code" placeholder="Enter Lobby Code to Join" />
-      <button onclick="joinGame()">↩ Join Existing Operation</button>
-    </div>
-  </div>
-
-  <footer>Created by yaay | Intel: <a href="mailto:woowarey@gmail.com">woowarey@gmail.com</a> | Discord: _yaayyy</footer>
-
-<button onclick="buyTickets(3)">Buy 3 Tickets</button>
-<script type="module">
-  import { buyTickets } from './payment.js';
-  window.buyTickets = buyTickets;
-</script>
-
   
-  <script>
-    function createGame() {
-      const code = Math.random().toString(36).substring(2, 7).toUpperCase();
-      window.location.href = `game.html?lobby=${code}`;
+  <!-- Navbar with button commands -->
+  <nav class="navbar">
+    <button onclick="showSection('home')">Home</button>
+    <button onclick="showSection('shop')">Shop</button>
+    <button onclick="showSection('stats')">Stats</button>
+    <button onclick="login()">Login</button>
+  </nav>
+  
+  <!-- Main game container -->
+  <main id="game-container">
+    <!-- Home Section with Game Map -->
+    <section id="home-section" class="active">
+      <div id="map" style="height: 500px;"></div>
+    </section>
+    <!-- Shop Section (Reward Center) -->
+    <section id="shop-section">
+      <div id="reward-shop"></div>
+    </section>
+    <!-- Stats Section (Player Stats HUD) -->
+    <section id="stats-section">
+      <div id="player-stats"></div>
+    </section>
+  </main>
+  
+  <footer style="text-align:center; padding: 10px; background:#333;">
+    <p>&copy; 2025 Conquerest. All rights reserved.</p>
+  </footer>
+  
+  <!-- Load Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <!-- Load game engine and modules -->
+  <script type="module">
+    // Engine initialization (assumes engine.js sets up the game, map, units, etc.)
+    import "./engine.js";
+  </script>
+  
+  <script type="module">
+    // Initialize the player system
+    // This file includes Firebase authentication, stats persistence, and HUD updating
+    import { loginWithGoogle } from "./player-system.js";
+    window.login = async () => {
+      await loginWithGoogle();
     }
-
-    function joinGame() {
-      const code = document.getElementById("join-code").value.trim().toUpperCase();
-      if (code) window.location.href = `game.html?lobby=${code}`;
+  </script>
+  
+  <script type="module">
+    // Initialize the reward center (shop, achievements, etc.)
+    import { initRewardCenter } from "./reward-center.js";
+    window.addEventListener("load", () => {
+      initRewardCenter();
+    });
+  </script>
+  
+  <!-- Navigation helper scripts -->
+  <script>
+    function showSection(section) {
+      // Hide all sections
+      document.getElementById("home-section").classList.remove("active");
+      document.getElementById("shop-section").classList.remove("active");
+      document.getElementById("stats-section").classList.remove("active");
+      
+      // Show the selected section
+      if (section === "home") {
+        document.getElementById("home-section").classList.add("active");
+      } else if (section === "shop") {
+        document.getElementById("shop-section").classList.add("active");
+      } else if (section === "stats") {
+        document.getElementById("stats-section").classList.add("active");
+      }
     }
   </script>
 </body>
