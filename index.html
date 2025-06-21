@@ -6,9 +6,11 @@
   <title>Conquerest Command Center</title>
   
   <!-- Leaflet CSS for map rendering -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+        integrity="sha256-sA+eCHd2nd3b3BWHjJ6LTkY5mmKUIoTcNTszE1M6zgg=" 
+        crossorigin=""/>
   
-  <!-- Inline CSS for an old school military UI -->
+  <!-- Military-style UI CSS -->
   <style>
     body {
       background: #1b1b1b;
@@ -51,7 +53,7 @@
     #game-container {
       padding: 20px;
     }
-    /* Sections */
+    /* Section layout */
     section {
       display: none;
       padding: 10px;
@@ -59,7 +61,7 @@
     section.active {
       display: block;
     }
-    /* HUD styling for player stats and shop */
+    /* Player stats HUD styling */
     #player-stats {
       position: absolute;
       bottom: 10px;
@@ -71,6 +73,7 @@
       border-radius: 6px;
       font-family: monospace;
     }
+    /* Reward shop styling */
     #reward-shop {
       position: absolute;
       top: 10px;
@@ -83,10 +86,10 @@
       font-family: sans-serif;
       font-size: 14px;
     }
-    /* Popup animation */
+    /* Popup fade-out animation */
     @keyframes fadeOut {
       from { opacity: 1; }
-      to { opacity: 0; }
+      to   { opacity: 0; }
     }
   </style>
 </head>
@@ -95,7 +98,7 @@
     <h1>Conquerest Command Center</h1>
   </header>
   
-  <!-- Navbar with button commands -->
+  <!-- Command-style Navbar -->
   <nav class="navbar">
     <button onclick="showSection('home')">Home</button>
     <button onclick="showSection('shop')">Shop</button>
@@ -103,17 +106,17 @@
     <button onclick="login()">Login</button>
   </nav>
   
-  <!-- Main game container -->
+  <!-- Main Container -->
   <main id="game-container">
-    <!-- Home Section with Game Map -->
+    <!-- Home Section: Contains the game map -->
     <section id="home-section" class="active">
       <div id="map" style="height: 500px;"></div>
     </section>
-    <!-- Shop Section (Reward Center) -->
+    <!-- Shop Section: Reward Center (achievements, shop, unlockables) -->
     <section id="shop-section">
       <div id="reward-shop"></div>
     </section>
-    <!-- Stats Section (Player Stats HUD) -->
+    <!-- Stats Section: Player stats display -->
     <section id="stats-section">
       <div id="player-stats"></div>
     </section>
@@ -124,32 +127,40 @@
   </footer>
   
   <!-- Load Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+          integrity="sha256-o9N1j7p+Wj3E1X81miSzXok1sI2XbN7qCO//+vD1d2s=" 
+          crossorigin=""></script>
   
-  <!-- Load game engine and modules -->
+  <!-- Game Engine Module -->
   <script type="module">
-    // Engine initialization (assumes engine.js sets up the game, map, units, etc.)
+    // This should initialize your game and the map on the #map element.
     import "./engine.js";
   </script>
   
+  <!-- Player System: Firebase login and persistent stat management -->
   <script type="module">
-    // Initialize the player system
-    // This file includes Firebase authentication, stats persistence, and HUD updating
     import { loginWithGoogle } from "./player-system.js";
     window.login = async () => {
-      await loginWithGoogle();
+      try {
+        const user = await loginWithGoogle();
+        if (user) {
+          alert(`Welcome, ${user.displayName}!`);
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+      }
     }
   </script>
   
+  <!-- Reward Center Initialization -->
   <script type="module">
-    // Initialize the reward center (shop, achievements, etc.)
     import { initRewardCenter } from "./reward-center.js";
     window.addEventListener("load", () => {
       initRewardCenter();
     });
   </script>
   
-  <!-- Navigation helper scripts -->
+  <!-- Navigation Helper Script -->
   <script>
     function showSection(section) {
       // Hide all sections
@@ -157,7 +168,7 @@
       document.getElementById("shop-section").classList.remove("active");
       document.getElementById("stats-section").classList.remove("active");
       
-      // Show the selected section
+      // Show selected section
       if (section === "home") {
         document.getElementById("home-section").classList.add("active");
       } else if (section === "shop") {
