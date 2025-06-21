@@ -6,6 +6,14 @@
   <title>Conquerest Lobby</title>
   
   <!-- Military-Style UI CSS -->
+  <!-- You can update or remove integrity if needed -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+
   <style>
     body {
       background: #1b1b1b;
@@ -108,10 +116,9 @@
   
   <!-- Main Container -->
   <main id="game-container">
-    <!-- Lobby Section: Displays real lobby cards -->
+    <!-- Lobby Section: Displays lobby cards from Firestore -->
     <section id="lobby-section" class="active">
       <div id="lobby-list">
-        <!-- Lobby cards will be loaded here -->
         <p id="lobby-status" style="color: #f33;">Loading lobbies...</p>
       </div>
     </section>
@@ -119,7 +126,7 @@
     <!-- Stats Section: Display player stats -->
     <section id="stats-section">
       <div id="player-stats">
-        <!-- Player stats will be rendered here after login -->
+        <!-- Player stats will appear here after login -->
       </div>
     </section>
   </main>
@@ -128,41 +135,34 @@
     <p>&copy; 2025 Conquerest. All rights reserved.</p>
   </footer>
   
-  <!-- Player System: Firebase Authentication and Stats -->
+  <!-- Player System Module: Authentication and Stats -->
   <script type="module">
-    try {
-      import { loginWithGoogle, renderPlayerStats } from "./player-system.js";
-      window.login = async () => {
-        try {
-          const user = await loginWithGoogle();
-          if (user) {
-            alert(`Welcome, ${user.displayName}!`);
-            renderPlayerStats("player-stats");
-          }
-        } catch (error) {
-          console.error("Login error:", error);
+    import { loginWithGoogle, renderPlayerStats } from "./player-system.js";
+    // Expose login function globally
+    window.login = async () => {
+      try {
+        const user = await loginWithGoogle();
+        if (user) {
+          alert(`Welcome, ${user.displayName}!`);
+          renderPlayerStats("player-stats");
         }
-      };
-      console.log("Player system module loaded successfully.");
-    } catch (e) {
-      console.error("Error loading player system module:", e);
-    }
+      } catch (error) {
+        console.error("Login error:", error);
+      }
+    };
+    console.log("Player system module loaded successfully.");
   </script>
   
   <!-- Reward Center Initialization -->
   <script type="module">
-    try {
-      import { initRewardCenter } from "./reward-center.js";
-      window.addEventListener("load", () => {
-        initRewardCenter();
-        console.log("Reward center initialized.");
-      });
-    } catch (e) {
-      console.error("Error initializing reward center:", e);
-    }
+    import { initRewardCenter } from "./reward-center.js";
+    window.addEventListener("load", () => {
+      initRewardCenter();
+      console.log("Reward center initialized.");
+    });
   </script>
   
-  <!-- Navigation Helper Script -->
+  <!-- Navigation Helper (plain script) -->
   <script>
     function showSection(section) {
       document.getElementById("lobby-section").classList.remove("active");
@@ -177,45 +177,43 @@
     }
   </script>
   
-  <!-- Real Lobby Logic: Fetch and display lobby cards from Firestore -->
+  <!-- Lobby Logic: Fetch and Display Lobbies -->
   <script type="module">
-    try {
-      import { fetchLobbies, joinLobby } from "./lobbies.js";
-      
-      async function displayLobbies() {
-        const lobbyListContainer = document.getElementById("lobby-list");
-        const lobbyStatus = document.getElementById("lobby-status");
-        lobbyListContainer.innerHTML = "";
-        try {
-          const lobbies = await fetchLobbies();
-          if (lobbies.length === 0) {
-            lobbyStatus.textContent = "No lobbies available.";
-            console.log("No lobbies found in Firestore.");
-            return;
-          }
-          lobbies.forEach(lobby => {
-            const card = document.createElement("div");
-            card.classList.add("lobby-card");
-            card.innerHTML = `
-              <h3>${lobby.lobbyName}</h3>
-              <p>Start Time: ${lobby.startTime}</p>
-              <p>In-Game Year: ${lobby.inGameYear}</p>
-              <p>Players: ${lobby.playersCount}</p>
-              <button onclick="joinLobby('${lobby.id}')">Join Lobby</button>
-            `;
-            lobbyListContainer.appendChild(card);
-          });
-          console.log("Lobbies displayed successfully.");
-        } catch (error) {
-          lobbyStatus.textContent = "Error loading lobbies.";
-          console.error("Error in displayLobbies:", error);
+    import { fetchLobbies, joinLobby } from "./lobbies.js";
+    
+    async function displayLobbies() {
+      const lobbyListContainer = document.getElementById("lobby-list");
+      const lobbyStatus = document.getElementById("lobby-status");
+      lobbyListContainer.innerHTML = "";
+      try {
+        const lobbies = await fetchLobbies();
+        if (lobbies.length === 0) {
+          lobbyStatus.textContent = "No lobbies available.";
+          console.log("No lobbies found in Firestore.");
+          return;
         }
+        lobbies.forEach(lobby => {
+          const card = document.createElement("div");
+          card.classList.add("lobby-card");
+          card.innerHTML = `
+            <h3>${lobby.lobbyName}</h3>
+            <p>Start Time: ${lobby.startTime}</p>
+            <p>In-Game Year: ${lobby.inGameYear}</p>
+            <p>Players: ${lobby.playersCount}</p>
+            <button onclick="window.joinLobby('${lobby.id}')">Join Lobby</button>
+          `;
+          lobbyListContainer.appendChild(card);
+        });
+        console.log("Lobbies displayed successfully.");
+      } catch (error) {
+        lobbyStatus.textContent = "Error loading lobbies.";
+        console.error("Error in displayLobbies:", error);
       }
-      
-      window.addEventListener("load", displayLobbies);
-    } catch (e) {
-      console.error("Error loading lobbies module:", e);
     }
+    
+    // Expose joinLobby globally for inline use
+    window.joinLobby = joinLobby;
+    window.addEventListener("load", displayLobbies);
   </script>
 </body>
 </html>
