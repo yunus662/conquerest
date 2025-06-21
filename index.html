@@ -2,157 +2,144 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Conquerest</title>
+  <title>Conquerest | Tactical Command</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      background: linear-gradient(to right, #0a0f1a, #111c29);
-      color: #eee;
+      font-family: 'Share Tech Mono', monospace;
+      background: radial-gradient(ellipse at top, #0c0f14, #05070a);
+      color: #00ffcc;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
     }
 
-    /* Top bar */
     header {
-      background: #001928;
-      color: #00afff;
-      padding: 0.8em 1.5em;
-      font-size: 0.95em;
+      background: #121820;
+      padding: 1em 2em;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #003248;
+      border-bottom: 2px solid #00ffcc33;
     }
 
-    header span {
-      font-weight: bold;
+    header .nav-link {
+      color: #00ffcc;
+      text-decoration: none;
+      margin: 0 1em;
+      text-transform: uppercase;
     }
 
-    /* Main card */
-    .container {
+    header .nav-link:hover {
+      text-decoration: underline;
+    }
+
+    .console {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      backdrop-filter: blur(12px);
       padding: 2em;
-      border-radius: 16px;
+    }
+
+    .command-box {
+      background: rgba(0, 255, 204, 0.05);
+      border: 2px solid #00ffcc44;
+      padding: 2em;
+      border-radius: 12px;
+      box-shadow: 0 0 40px #00ffcc22;
+      width: 100%;
+      max-width: 480px;
       text-align: center;
-      box-shadow: 0 0 40px rgba(0,0,0,0.6);
-      max-width: 400px;
-      width: 90%;
-      animation: popin 1.5s ease;
     }
 
-    @keyframes popin {
-      from { transform: scale(0.92); opacity: 0; }
-      to   { transform: scale(1); opacity: 1; }
-    }
-
-    h1 {
+    .command-box h1 {
       font-size: 2em;
       margin-bottom: 0.2em;
-      background: linear-gradient(to right, #00c6ff, #00afff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #00ffd0;
     }
 
-    .slogan {
+    .command-box .tagline {
       font-size: 1em;
-      color: #bbb;
       margin-bottom: 1.5em;
+      color: #00ffccaa;
     }
 
     input, button {
       width: 100%;
-      font-size: 1em;
-      padding: 0.6em;
+      padding: 0.7em;
       margin: 0.4em 0;
-      border: none;
-      border-radius: 8px;
-    }
-
-    input {
-      background: #161f2a;
-      color: #fff;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1em;
+      background: #121820;
+      border: 1px solid #00ffcc66;
+      color: #00ffcc;
+      border-radius: 6px;
     }
 
     button {
-      background: #00afff;
-      color: #000;
-      font-weight: bold;
+      background: #00ffcc22;
       cursor: pointer;
-      transition: background 0.2s;
+      font-weight: bold;
+      transition: 0.2s ease;
     }
 
     button:hover {
-      background: #0091cc;
-    }
-
-    a {
-      color: #00afff;
-      text-decoration: none;
-      display: inline-block;
-      margin-top: 0.8em;
+      background: #00ffcc55;
     }
 
     footer {
       text-align: center;
       font-size: 0.8em;
-      color: #555;
+      color: #00ffcc66;
       padding: 1em;
+      border-top: 1px solid #00ffcc22;
     }
   </style>
 </head>
 <body>
   <header>
-    <div><span>Creator:</span> yaay</div>
-    <div>
-      <span>Email:</span> <a href="mailto:woowarey@gmail.com">woowarey@gmail.com</a> |
-      <span>Discord:</span> _yaayyy
-    </div>
+    <div><strong>Conquerest HQ</strong></div>
+    <nav>
+      <a class="nav-link" href="about.html">About</a>
+      <a class="nav-link" href="contact.html">Contact</a>
+      <a class="nav-link" href="forum.html">Forum</a>
+    </nav>
   </header>
 
-  <div class="container">
-    <div class="card">
-      <h1>🌍 Conquerest</h1>
-      <div class="slogan">Global domination starts here. Join a lobby. Shape the map.</div>
-
-      <button onclick="createGame()">🎮 Start New Game</button>
-      <input id="join-code" placeholder="Join with Lobby Code" />
-      <button onclick="joinGame()">🔗 Join Game</button>
-
-      <a href="forum.html">🗨️ Visit the Forum</a>
+  <div class="console">
+    <div class="command-box">
+      <h1>🌐 CONQUEREST</h1>
+      <div class="tagline">Tactical Warfare Simulation Interface</div>
+      <button onclick="createGame()">➤ Start New Campaign</button>
+      <input id="join-code" placeholder="Enter Lobby Code to Join" />
+      <button onclick="joinGame()">↩ Join Existing Operation</button>
     </div>
   </div>
+
+  <footer>Created by yaay | Intel: <a href="mailto:woowarey@gmail.com">woowarey@gmail.com</a> | Discord: _yaayyy</footer>
 
   <script type="module">
     import { getActiveUserCount } from './user-tracker.js';
     import { spawnLobbies } from './lobby.js';
 
-    function createGame() {
+    window.createGame = function () {
       const code = Math.random().toString(36).substring(2, 7).toUpperCase();
       window.location.href = `./game.html?lobby=${code}`;
-    }
+    };
 
-    function joinGame() {
+    window.joinGame = function () {
       const code = document.getElementById("join-code").value.trim().toUpperCase();
       if (code) window.location.href = `./game.html?lobby=${code}`;
-    }
+    };
 
-    // Optional: Log available lobbies
-    const users = getActiveUserCount();
-    const lobbies = spawnLobbies(users);
-    console.log("Conquerest active users:", users);
-    console.log("Available lobbies:", lobbies);
+    // Optional logs for dev
+    const count = getActiveUserCount();
+    const lobbies = spawnLobbies(count);
+    console.log("Active users:", count);
+    console.log("Spawned lobbies:", lobbies);
   </script>
 </body>
 </html>
