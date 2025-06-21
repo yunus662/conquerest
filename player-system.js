@@ -17,7 +17,7 @@ import {
   updateDoc,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// Firebase configuration (ensure these values are correct for your project)
+// Firebase configuration (update these values as needed)
 const firebaseConfig = {
   apiKey: "AIzaSyAfSrEl8htKuV5HzTK0MpL8p5SqaRMX1hU",
   authDomain: "conquerorauth.firebaseapp.com",
@@ -28,13 +28,13 @@ const firebaseConfig = {
   measurementId: "G-D05994C1CP",
 };
 
-// Initialize Firebase
+// Initialize Firebase app and services
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const db = getFirestore(app);
 
-// Default player statistics
+// Default Player Statistics
 const defaultStats = {
   tickets: 0,
   wins: 0,
@@ -42,39 +42,50 @@ const defaultStats = {
   level: 1,
 };
 
-// --------------------------------------------------------
-// Authentication & Profile Initialization Functions
-// --------------------------------------------------------
+// --------------------------------------------------------------------------
+// Authentication and Profile Initialization
+// --------------------------------------------------------------------------
 
-// Log in with Google
+/**
+ * Logs in a user using Google authentication.
+ * After a successful login, ensures that the user's stats document is initialized.
+ */
 export async function loginWithGoogle() {
   try {
     const result = await signInWithPopup(auth, provider);
     await ensureStatsInitialized();
     return result.user;
-  } catch (err) {
-    console.error("Login failed:", err);
-    throw err;
+  } catch (error) {
+    console.error("loginWithGoogle error:", error);
+    throw error;
   }
 }
 
-// Log out current user
+/**
+ * Logs out the current user.
+ */
 export async function logout() {
   return signOut(auth);
 }
 
-// Return the current Firebase user
+/**
+ * Returns the current Firebase user.
+ */
 export function getCurrentUser() {
   return auth.currentUser;
 }
 
-// Get current user ID (or null if not logged in)
+/**
+ * Returns the UID of the current user, or null if not logged in.
+ */
 export async function getUserID() {
   const user = auth.currentUser;
   return user ? user.uid : null;
 }
 
-// Ensure the user's stats document is created in Firestore
+/**
+ * Ensures that a Firestore document for the user exists; if not, creates one with default stats.
+ */
 async function ensureStatsInitialized() {
   const uid = await getUserID();
   if (!uid) return;
@@ -85,11 +96,14 @@ async function ensureStatsInitialized() {
   }
 }
 
-// --------------------------------------------------------
-// Player Stats Read/Update Functions
-// --------------------------------------------------------
+// --------------------------------------------------------------------------
+// Player Stats Operations
+// --------------------------------------------------------------------------
 
-// Load current player stats from Firestore
+/**
+ * Loads the current player's stats from Firestore.
+ * @returns {Object|null} The user's stats if available.
+ */
 export async function loadStats() {
   const uid = await getUserID();
   if (!uid) return null;
@@ -98,61 +112,66 @@ export async function loadStats() {
   return snap.exists() ? snap.data() : null;
 }
 
-// Helper: Increment a numeric field in the user's stats document
+/**
+ * Helper function to increment a numeric field in the user's stats document.
+ */
 async function incrementField(field, value) {
   const uid = await getUserID();
   if (!uid) return;
   const ref = doc(db, "users", uid);
   const snap = await getDoc(ref);
-  const current = snap.data() && snap.data()[field] ? snap.data()[field] : 0;
+  const current = snap.data()?.[field] || 0;
   const updated = current + value;
   await updateDoc(ref, { [field]: updated });
   return updated;
 }
 
-// Add (or subtract) tickets from the player's account
+/**
+ * Adds (or subtracts) a given ticket amount.
+ */
 export async function addTickets(amount) {
   return await incrementField("tickets", amount);
 }
 
-// Increment win count by one
+/**
+ * Increments the win count by one.
+ */
 export async function addWin() {
   return await incrementField("wins", 1);
 }
 
-// Award EXP and handle level-up logic
+/**
+ * Adds EXP to the user and handles level-up logic.
+ * On level-up, the EXP is reduced by the required threshold.
+ */
 export async function addExp(amount) {
   const uid = await getUserID();
   if (!uid) return;
   const ref = doc(db, "users", uid);
   const snap = await getDoc(ref);
   if (!snap.exists()) return;
-  
   let { exp, level } = snap.data();
   exp += amount;
-  
-  // Define the EXP required for the next level
-  const xpNeeded = Math.floor(100 + level * level * 1.5);
-  
-  // Level up if enough EXP is gathered
+
+  // Experience required for next level (basic formula)
+  const xpNeeded = Math.floor(100 + Math.pow(level, 2) * 1.5);
+
   if (exp >= xpNeeded) {
     level += 1;
-    exp -= xpNeeded;
+    exp = exp - xpNeeded;
   }
   
   await updateDoc(ref, { exp, level });
   return { exp, level };
 }
 
-// --------------------------------------------------------
-// UI Rendering Helper
-// --------------------------------------------------------
-
-// Render player statistics to a specified HTML element by its ID
+/**
+ * Renders the player's statistics into an HTML element with the given ID.
+ */
 export async function renderPlayerStats(elementId) {
   const stats = await loadStats();
   if (!stats) return;
-  const xpNeeded = Math.floor(100 + stats.level * stats.level * 1.5);
+  const xpNeeded = Math.floor(100 + Math.pow(stats.level, 2) * 1.5);
   const element = document.getElementById(elementId);
   if (!element) return;
   
@@ -165,14 +184,15 @@ export async function renderPlayerStats(elementId) {
   `;
 }
 
-// --------------------------------------------------------
-// Auto-update UI on Authentication State Change
-// --------------------------------------------------------
+// --------------------------------------------------------------------------
+// Auto Update on Authentication Change
+// --------------------------------------------------------------------------
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     await ensureStatsInitialized();
-    if (document.getElementById("player-stats")) {
+    const statsContainer = document.getElementById("player-stats");
+    if (statsContainer) {
       renderPlayerStats("player-stats");
     }
   }
