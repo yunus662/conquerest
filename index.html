@@ -73,6 +73,11 @@
       color: var(--primary);
       text-decoration: none;
     }
+    #lobby-list button {
+      display: block;
+      margin: 0.3em auto;
+      background: #444;
+    }
   </style>
 </head>
 <body>
@@ -84,23 +89,48 @@
     <input id="join-code" placeholder="Join with Lobby Code" />
     <button onclick="joinGame()">🔗 Join Game</button>
 
+    <div id="lobby-list"></div>
+
     <div class="footer">
       <a href="/Conqueror-games/forum.html">🗨️ Visit the Forum</a>
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import { getActiveUserCount } from "./user-tracker.js";
+    import { spawnLobbies } from "./lobby.js";
+
     const base = "/Conqueror-games";
 
-    function createGame() {
+    window.createGame = function () {
       const code = Math.random().toString(36).substring(2, 7).toUpperCase();
       window.location.href = `${base}/game.html?lobby=${code}`;
-    }
+    };
 
-    function joinGame() {
+    window.joinGame = function () {
       const code = document.getElementById("join-code").value.trim().toUpperCase();
       if (code) window.location.href = `${base}/game.html?lobby=${code}`;
+    };
+
+    function renderLobbies(list) {
+      const div = document.getElementById("lobby-list");
+      div.innerHTML = "<h3>Available Lobbies</h3>";
+      list.forEach(code => {
+        const btn = document.createElement("button");
+        btn.textContent = `Join ${code}`;
+        btn.onclick = () => window.location.href = `${base}/game.html?lobby=${code}`;
+        div.appendChild(btn);
+      });
     }
+
+    function updateLobbyList() {
+      const count = getActiveUserCount();
+      const lobbies = spawnLobbies(count);
+      renderLobbies(lobbies);
+    }
+
+    updateLobbyList();
+    setInterval(updateLobbyList, 15000);
   </script>
 </body>
 </html>
