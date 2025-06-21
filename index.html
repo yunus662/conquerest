@@ -7,35 +7,70 @@
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(ellipse at top, #0a0f1b, #101820);
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(to right, #0a0f1a, #111c29);
       color: #eee;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Top bar */
+    header {
+      background: #001928;
+      color: #00afff;
+      padding: 0.8em 1.5em;
+      font-size: 0.95em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #003248;
+    }
+
+    header span {
+      font-weight: bold;
+    }
+
+    /* Main card */
+    .container {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
     }
+
     .card {
       background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(16px);
       border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
       padding: 2em;
       border-radius: 16px;
-      box-shadow: 0 0 40px rgba(0,0,0,0.4);
       text-align: center;
-      width: 90%;
+      box-shadow: 0 0 40px rgba(0,0,0,0.6);
       max-width: 400px;
+      width: 90%;
+      animation: popin 1.5s ease;
     }
+
+    @keyframes popin {
+      from { transform: scale(0.92); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
     h1 {
       font-size: 2em;
-      color: #00aaff;
       margin-bottom: 0.2em;
+      background: linear-gradient(to right, #00c6ff, #00afff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
+
     .slogan {
       font-size: 1em;
       color: #bbb;
       margin-bottom: 1.5em;
     }
+
     input, button {
       width: 100%;
       font-size: 1em;
@@ -44,36 +79,59 @@
       border: none;
       border-radius: 8px;
     }
+
     input {
-      background: #1c1c1c;
+      background: #161f2a;
       color: #fff;
     }
+
     button {
-      background: #00aaff;
+      background: #00afff;
       color: #000;
       font-weight: bold;
       cursor: pointer;
+      transition: background 0.2s;
     }
+
     button:hover {
-      background: #008ed0;
+      background: #0091cc;
     }
+
     a {
-      color: #00aaff;
+      color: #00afff;
       text-decoration: none;
-      font-size: 0.9em;
+      display: inline-block;
+      margin-top: 0.8em;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.8em;
+      color: #555;
+      padding: 1em;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>🌍 Conquerest</h1>
-    <div class="slogan">Forge alliances. Seize cities. Rewrite history.</div>
+  <header>
+    <div><span>Creator:</span> yaay</div>
+    <div>
+      <span>Email:</span> <a href="mailto:woowarey@gmail.com">woowarey@gmail.com</a> |
+      <span>Discord:</span> _yaayyy
+    </div>
+  </header>
 
-    <button onclick="createGame()">🎮 Start New Game</button>
-    <input id="join-code" placeholder="Join with Lobby Code" />
-    <button onclick="joinGame()">🔗 Join Game</button>
+  <div class="container">
+    <div class="card">
+      <h1>🌍 Conquerest</h1>
+      <div class="slogan">Global domination starts here. Join a lobby. Shape the map.</div>
 
-    <p><a href="forum.html">🗨️ Visit the Forum</a></p>
+      <button onclick="createGame()">🎮 Start New Game</button>
+      <input id="join-code" placeholder="Join with Lobby Code" />
+      <button onclick="joinGame()">🔗 Join Game</button>
+
+      <a href="forum.html">🗨️ Visit the Forum</a>
+    </div>
   </div>
 
   <script type="module">
@@ -90,9 +148,11 @@
       if (code) window.location.href = `./game.html?lobby=${code}`;
     }
 
-    // Optional: log lobby spawn based on active users
-    console.log("Active users:", getActiveUserCount());
-    console.log("Spawned lobbies:", spawnLobbies(getActiveUserCount()));
+    // Optional: Log available lobbies
+    const users = getActiveUserCount();
+    const lobbies = spawnLobbies(users);
+    console.log("Conquerest active users:", users);
+    console.log("Available lobbies:", lobbies);
   </script>
 </body>
 </html>
