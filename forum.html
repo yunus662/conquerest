@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Conquerest Forum</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      background: #05090d;
+      font-family: 'Share Tech Mono', monospace;
+      color: #00ffcc;
+    }
+
+    header {
+      background: #101820;
+      padding: 1em;
+      border-bottom: 1px solid #00ffcc33;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    #chat {
+      padding: 1em;
+      max-height: 70vh;
+      overflow-y: auto;
+      border-bottom: 1px solid #00ffcc22;
+    }
+
+    #input-area {
+      display: flex;
+      padding: 1em;
+      border-top: 1px solid #00ffcc22;
+    }
+
+    input {
+      flex: 1;
+      padding: 0.6em;
+      font-size: 1em;
+      background: #121820;
+      color: #00ffcc;
+      border: 1px solid #00ffcc33;
+      border-radius: 4px;
+      margin-right: 0.5em;
+    }
+
+    button {
+      background: #00ffcc44;
+      color: #000;
+      border: none;
+      padding: 0.6em 1em;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>🧠 Conquerest Forum | Tactical Dispatch</header>
+  <div id="chat"></div>
+  <div id="input-area">
+    <input id="msg-input" placeholder="Type command or message..." />
+    <button onclick="send()">Send</button>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    const socket = io(); // Connects to your running server.js backend
+    const chat = document.getElementById("chat");
+    const input = document.getElementById("msg-input");
+
+    socket.on("connect", () => {
+      log(`🛰 Connected as ${socket.id}`);
+    });
+
+    socket.on("chat", (msg) => {
+      log(msg);
