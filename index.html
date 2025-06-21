@@ -14,66 +14,66 @@
       --accent-dark: #c0392b;
       --border-color: #2c2c2e;
     }
-
-    /* Reset and Base */
+    /* Basic reset */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       background: var(--bg-dark);
       color: var(--text-light);
       line-height: 1.6;
     }
     a { text-decoration: none; color: inherit; }
-
+    
     /* Navigation Bar */
-    nav#navbar {
+    #navbar {
       background: var(--bg-medium);
-      border-bottom: 1px solid var(--border-color);
       padding: 10px 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-bottom: 1px solid var(--border-color);
     }
-    nav#navbar ul {
+    #navbar ul {
       list-style: none;
       display: flex;
       gap: 20px;
     }
-    nav#navbar li {
+    #navbar li {
       cursor: pointer;
       padding: 5px 10px;
       transition: background 0.25s;
     }
-    nav#navbar li:hover {
+    #navbar li:hover {
       background: var(--accent);
       color: #111;
     }
-    nav#navbar .right {
+    #navbar .right {
       display: flex;
       gap: 15px;
       align-items: center;
     }
-    /* Profile Card (shown after login) */
-    #profileCard {
-      display: none;
+    /* Profile Card (displayed after login) */
+    #profileDisplay {
       background: var(--bg-light);
-      padding: 10px 15px;
       border: 1px solid var(--border-color);
+      padding: 10px 15px;
       border-radius: 6px;
-      display: flex;
+      margin: 10px 30px;
+      display: none;
       align-items: center;
       gap: 10px;
     }
-    #profileCard img {
-      width: 50px;
-      height: 50px;
+    #profileDisplay img {
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       object-fit: cover;
     }
-    #profileCard h3, #profileCard p {
-      margin: 0;
+    #profileDisplay div {
+      display: flex;
+      flex-direction: column;
     }
-    #profileCard button {
+    #profileDisplay button {
       background: var(--accent);
       border: none;
       padding: 5px 10px;
@@ -81,62 +81,61 @@
       cursor: pointer;
       transition: background 0.25s;
     }
-    #profileCard button:hover {
+    #profileDisplay button:hover {
       background: var(--accent-dark);
       color: #111;
     }
-
     /* Pages Container */
     #pages {
-      padding: 30px;
+      padding: 20px 30px;
     }
-    .page {
-      display: none;
-    }
-    /* Default (after login) message for non-admin users */
-    #updateNotice {
-      display: none;
-      padding: 20px;
-      background: var(--bg-medium);
-      text-align: center;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      margin-top: 20px;
-    }
+    .page { display: none; }
+    .page.active { display: block; }
     
-    /* Admin Console */
-    #adminConsole {
-      display: none;
-      padding: 20px;
+    /* Home (Lobby) Page */
+    #page-home {
+      text-align: center;
+      padding: 40px;
       background: var(--bg-medium);
       border: 1px solid var(--border-color);
       border-radius: 6px;
-      margin-top: 20px;
+      margin-bottom: 20px;
     }
-    #adminConsole h2 {
+    /* Standard page styling for Forum, About, Contacts, Creator */
+    .page h2 {
       margin-bottom: 15px;
     }
-    #adminConsole button {
-      background: var(--accent);
-      border: none;
-      padding: 10px 15px;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-right: 10px;
-      transition: background 0.25s;
+    
+    /* Admin Console Page */
+    #page-admin {
+      background: var(--bg-medium);
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
     }
-    #adminConsole button:hover {
-      background: var(--accent-dark);
-      color: #111;
+    #repoFiles {
+      margin-top: 15px;
     }
-    /* Shutdown Overlay */
+    #repoFiles ul { list-style: none; padding-left: 0; }
+    #repoFiles li { padding: 5px 0; }
+    
+    /* Update Notice (for non-admin users) */
+    #updateNotice {
+      background: var(--bg-medium);
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      text-align: center;
+      margin-top: 20px;
+      display: none;
+    }
+    
+    /* Shutdown Overlay (for admin) */
     #shutdownOverlay {
       display: none;
       position: fixed;
-      top:0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: var(--bg-dark);
       z-index: 1000;
       color: var(--accent);
@@ -149,26 +148,32 @@
   <!-- Navigation Bar -->
   <nav id="navbar">
     <ul id="navLeft">
+      <li onclick="showPage('home')">Home</li>
       <li onclick="showPage('forum')">Forum</li>
       <li onclick="showPage('about')">About</li>
       <li onclick="showPage('contacts')">Contacts</li>
       <li onclick="showPage('creator')">Creator</li>
-      <!-- Admin Console tab: only visible for admin -->
-      <li id="adminTab" style="display:none;" onclick="showPage('admin')">Admin Console</li>
+      <li id="adminTab" style="display: none;" onclick="showPage('admin')">Admin Console</li>
     </ul>
-    <div class="right" id="navRight">
+    <div class="right">
       <button id="loginButton" onclick="login()">Login with Google</button>
-      <!-- Profile card will be inserted here when logged in -->
-      <div id="profileCard"></div>
     </div>
   </nav>
-
+  
+  <!-- Profile Card Display (appears after login) -->
+  <div id="profileDisplay"></div>
+  
   <!-- Pages Container -->
   <div id="pages">
+    <!-- Home Page -->
+    <div id="page-home" class="page active">
+      <h2>Welcome to Conquerest</h2>
+      <p id="statusMessage"></p>
+    </div>
     <!-- Forum Page -->
     <div id="page-forum" class="page">
       <h2>Forum</h2>
-      <p>Engage with fellow commanders and discuss strategies.</p>
+      <p>Connect with fellow commanders and discuss strategies.</p>
     </div>
     <!-- About Page -->
     <div id="page-about" class="page">
@@ -178,99 +183,72 @@
     <!-- Contacts Page -->
     <div id="page-contacts" class="page">
       <h2>Contacts</h2>
-      <p>Contact us at support@conquerest.com for any queries or support.</p>
+      <p>Contact us at support@conquerest.com for assistance and inquiries.</p>
     </div>
     <!-- Creator Page -->
     <div id="page-creator" class="page">
       <h2>Creator</h2>
-      <p>Developed by a passionate team dedicated to redefining strategy gaming.</p>
+      <p>Developed by a visionary team committed to redefining strategy gaming.</p>
     </div>
-    <!-- Admin Console Page -->
+    <!-- Admin Console Page (visible only to admin users) -->
     <div id="page-admin" class="page">
       <h2>Admin Console</h2>
-      <div id="adminConsole">
-        <button onclick="shutdownGame()">Shutdown Game</button>
-        <h3>Assign Role</h3>
-        <input type="email" id="role-email" placeholder="User Email" style="padding:8px;"/>
-        <select id="role-select" style="padding:8px; margin-left:5px;">
-          <option value="moderator">Moderator</option>
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
-        </select>
-        <button onclick="assignRole()">Assign</button>
-      </div>
-    </div>
-    <!-- Update Notice for non-admin users -->
-    <div id="updateNotice">
-      <h2>Notice</h2>
-      <p>Game is undergoing updates. Please check back later.</p>
+      <button onclick="shutdownGame()">Shutdown Game</button>
+      <button onclick="listRepoFiles()">List Repository Files</button>
+      <div id="repoFiles"></div>
+      <h3>Assign Role</h3>
+      <input type="email" id="role-email" placeholder="User Email" style="padding:8px;"/>
+      <select id="role-select" style="padding:8px; margin-left:5px;">
+        <option value="moderator">Moderator</option>
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button onclick="assignRole()">Assign</button>
     </div>
   </div>
-
+  
   <!-- Shutdown Overlay -->
   <div id="shutdownOverlay">
     <h1>Game Shutdown</h1>
     <p>The game is currently shut down for maintenance.</p>
-    <h3>Game Files:</h3>
-    <ul style="list-style: none;">
-      <li>engine.js</li>
-      <li>player-system.js</li>
-      <li>lobbies.js</li>
-      <li>reward-center.js</li>
-      <li>index.html</li>
-    </ul>
-    <button onclick="restartGame()" style="padding: 10px 20px; margin-top:20px; background: var(--accent); border: none; color:#fff; border-radius: 4px; cursor:pointer;">Restart Game</button>
+    <div id="repoFilesOverlay"></div>
+    <button onclick="restartGame()" style="padding: 10px 20px; margin-top:20px; background: var(--accent); border: none; color: #fff; border-radius: 4px; cursor: pointer;">Restart Game</button>
   </div>
-
-  <!-- Firebase & Custom Script Integration -->
+  
+  <!-- Firebase & Custom Scripts -->
   <script type="module">
     import { loginWithGoogle, renderPlayerStats } from "./player-system.js";
     
-    // Global variables for current user and role
+    // Global variables
     window.currentUser = null;
-    window.userRole = "guest"; // Possible values: guest, user, moderator, admin
+    window.userRole = "guest"; // guest, user, moderator, admin
     
     window.login = async function() {
       try {
         const user = await loginWithGoogle();
         window.currentUser = user;
-        // Hide login button; show profile card
         document.getElementById("loginButton").style.display = "none";
         renderProfileCard(user);
-        
-        // Determine role based on email
+        // Determine user role (admin emails get admin privileges)
         const adminEmails = ["imyaay234@gmail.com", "woowarey@gmail.com"];
-        if(adminEmails.includes(user.email)) {
+        if (adminEmails.includes(user.email)) {
           window.userRole = "admin";
-          // Simulate unlimited tickets
-          console.log("Admin privileges granted: Unlimited tickets assigned.");
           document.getElementById("adminTab").style.display = "inline-block";
+          document.getElementById("statusMessage").textContent = "Admin access granted. Unlimited tickets assigned.";
         } else {
           window.userRole = "user";
-          // For non-admins (and non-moderators), show update notice
+          document.getElementById("statusMessage").textContent = "Game is undergoing updates. Please check back later.";
           document.getElementById("updateNotice").style.display = "block";
         }
-        // Optionally render player stats in profile card
-        renderPlayerStats("profileStats");
+        // Optionally, update player stats in profile card
+        renderPlayerStats("dummyElement"); // For additional UI updates if needed
       } catch (err) {
         console.error("Login failed:", err);
       }
     };
     
-    window.logout = async function() {
-      // Implement Firebase signOut if needed (assume it's in player-system.js)
-      window.currentUser = null;
-      window.userRole = "guest";
-      // Reset UI
-      document.getElementById("loginButton").style.display = "inline-block";
-      document.getElementById("profileCard").innerHTML = "";
-      document.getElementById("adminTab").style.display = "none";
-      document.getElementById("updateNotice").style.display = "none";
-      hideAllPages();
-    };
-    
     function renderProfileCard(user) {
-      const container = document.getElementById("profileCard");
+      const container = document.getElementById("profileDisplay");
       container.innerHTML = `
         <img src="${user.photoURL}" alt="Profile Picture" />
         <div>
@@ -282,44 +260,80 @@
       container.style.display = "flex";
     }
     
+    window.logout = async function() {
+      // Assuming signOut is implemented in player-system.js
+      window.currentUser = null;
+      window.userRole = "guest";
+      document.getElementById("loginButton").style.display = "inline-block";
+      document.getElementById("profileDisplay").style.display = "none";
+      document.getElementById("adminTab").style.display = "none";
+      document.getElementById("statusMessage").textContent = "";
+      hideAllPages();
+      showPage("home");
+    };
+    
     function hideAllPages() {
       const pages = document.getElementsByClassName("page");
-      for(let page of pages){
-        page.style.display = "none";
+      for (let p of pages) {
+        p.classList.remove("active");
       }
-      document.getElementById("updateNotice").style.display = "none";
     }
     
-    function showPage(page) {
+    window.showPage = function(page) {
       hideAllPages();
-      document.getElementById("page-" + page).style.display = "block";
-    }
+      document.getElementById("page-" + page).classList.add("active");
+    };
     
-    // Admin console functions
-    function shutdownGame() {
-      // Display shutdown overlay and hide main pages
+    // Admin Console functions
+    window.shutdownGame = function() {
+      // Fetch real repository file list from GitHub and show shutdown overlay
+      listRepoFiles(true);
       document.getElementById("shutdownOverlay").style.display = "block";
       document.getElementById("pages").style.display = "none";
-    }
+    };
     
-    function restartGame() {
+    window.restartGame = function() {
       document.getElementById("shutdownOverlay").style.display = "none";
       document.getElementById("pages").style.display = "block";
-    }
+    };
     
-    function assignRole() {
+    window.assignRole = function() {
       const email = document.getElementById("role-email").value;
       const role = document.getElementById("role-select").value;
-      // Here you would update the user's role in your database; we'll simulate with an alert.
       alert(`Role '${role}' assigned to ${email}.`);
+      // Here, update the user's role in your backend (not implemented)
+    };
+    
+    // Fetch repository contents from GitHub API to list real files
+    window.listRepoFiles = async function(isOverlay = false) {
+      const repoUrl = "https://github.com/yunus662/conquerest";
+      const repoUrl = "https://github.com/yunus662/Conqueror-games/tree/revised";
+      try {
+        const response = await fetch(repoUrl);
+        if (!response.ok) throw new Error("Failed to fetch repository contents");
+        const files = await response.json();
+        displayRepoFiles(files, isOverlay);
+      } catch (err) {
+        console.error("Error fetching repo files:", err);
+      }
+    };
+    
+    function displayRepoFiles(files, isOverlay) {
+      let html = "<ul>";
+      files.forEach(file => {
+        html += `<li><a href="${file.download_url}" target="_blank">${file.name}</a></li>`;
+      });
+      html += "</ul>";
+      document.getElementById("repoFiles").innerHTML = html;
+      if (isOverlay) {
+        document.getElementById("repoFilesOverlay").innerHTML = html;
+      }
     }
     
-    // (Optional) You could also set up navigation events here.
-    // For now, we assume that clicking the nav items calls showPage('forum'), etc.
+    // Show home page by default on load
+    window.addEventListener("load", function() {
+      showPage("home");
+    });
   </script>
-  
-  <!-- Dummy container for additional profile stats if needed -->
-  <div id="profileStats" style="display:none;"></div>
-  
 </body>
 </html>
