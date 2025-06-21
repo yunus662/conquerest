@@ -117,6 +117,13 @@
 
   <footer>Created by yaay | Intel: <a href="mailto:woowarey@gmail.com">woowarey@gmail.com</a> | Discord: _yaayyy</footer>
 
+<button onclick="buyTickets(3)">Buy 3 Tickets</button>
+<script type="module">
+  import { buyTickets } from './payment.js';
+  window.buyTickets = buyTickets;
+</script>
+
+  
   <script>
     function createGame() {
       const code = Math.random().toString(36).substring(2, 7).toUpperCase();
