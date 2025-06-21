@@ -2,97 +2,97 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Conquerest Tactical Operations</title>
+  <title>Conquerest | Operation Uplink</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
-    body {
+    html, body {
       margin: 0;
+      height: 100%;
+      background: #050c14;
       font-family: 'Share Tech Mono', monospace;
-      background: #0a0f14;
       color: #00ffcc;
-      display: flex;
-      height: 100vh;
+      overflow: hidden;
     }
 
-    #map-area {
-      flex: 2;
-      position: relative;
-      background: #151e27;
-    }
-
-    #sidebar {
-      flex: 1;
-      background: #10141a;
-      border-left: 2px solid #00ffcc33;
+    #loading {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, #0a0f1a, #050c14);
       display: flex;
       flex-direction: column;
-      padding: 1em;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
     }
 
-    #status {
-      font-weight: bold;
-      color: #00ffcc;
-      margin-bottom: 1em;
+    #loading h1 {
+      font-size: 1.8em;
+      margin-bottom: 0.5em;
+      color: #00ffd0;
+      text-align: center;
     }
 
-    #event-log {
-      flex: 1;
-      overflow-y: auto;
-      background: #0d1218;
-      padding: 0.5em;
-      border: 1px solid #00ffcc33;
-      font-size: 0.9em;
+    .pulse {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #00ffcc;
+      animation: pulse 1s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.5); opacity: 1; }
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: none;
+    }
+
+    #fail {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: #0a0f1a;
+      color: #ff6688;
+      font-size: 1em;
+      padding: 2em;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div id="map-area">
-    <canvas id="game-canvas"></canvas>
-    <!-- Replace with Leaflet or custom map -->
+  <div id="loading">
+    <h1>🛰 Establishing Link to Conqueror Engine...</h1>
+    <div class="pulse"></div>
   </div>
 
-  <div id="sidebar">
-    <div id="status">🔷 Connecting to Tactical Lobby...</div>
-    <div id="event-log">Initializing campaign interface...</div>
-  </div>
+  <iframe id="game-frame" title="Conqueror Game Interface"></iframe>
+  <div id="fail">❌ Failed to load game interface. Please check your connection or try again later.</div>
 
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-  <script type="module">
-    import { initializeMap } from './city-logic.js';
-    import { startUnits } from './units.js';
-
+  <script>
     const params = new URLSearchParams(location.search);
     const lobby = params.get("lobby") || "ROOM-0";
+    const frame = document.getElementById("game-frame");
+    const loading = document.getElementById("loading");
+    const fail = document.getElementById("fail");
 
-    const socket = io();
+    const gameURL = `https://yunus662.github.io/Conqueror-games/index.html?lobby=${encodeURIComponent(lobby)}`;
+    frame.src = gameURL;
 
-    const log = (msg) => {
-      const logPanel = document.getElementById("event-log");
-      const entry = document.createElement("div");
-      entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
-      logPanel.appendChild(entry);
-      logPanel.scrollTop = logPanel.scrollHeight;
+    frame.onload = () => {
+      loading.style.display = "none";
+      frame.style.display = "block";
     };
 
-    socket.on("connect", () => {
-      document.getElementById("status").textContent = `🔷 Connected to: ${lobby}`;
-      socket.emit("join-lobby", lobby);
-      log("🛰️ Connection established");
-    });
-
-    socket.on("map-update", (data) => {
-      log("📦 Incoming update received");
-      // TODO: update your map/game state here
-    });
-
-    function sendMove(data) {
-      socket.emit("map-update", { lobby, ...data });
-    }
-
-    // Initialize your game logic
-    initializeMap();
-    startUnits();
-    log("✔ Tactical systems online");
+    frame.onerror = () => {
+      loading.style.display = "none";
+      fail.style.display = "block";
+    };
   </script>
 </body>
 </html>
