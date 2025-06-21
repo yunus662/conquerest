@@ -2,41 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Conquerest Lobby</title>
+  <title>Conquerest</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    :root {
-      --primary: #00aaff;
-      --bg: linear-gradient(145deg, #0c0c0c, #121f2e);
-      --glass: rgba(255, 255, 255, 0.05);
-    }
     body {
       margin: 0;
-      padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: var(--bg);
+      background: radial-gradient(ellipse at top, #0a0f1b, #101820);
       color: #eee;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
     }
     .card {
-      background: var(--glass);
+      background: rgba(255,255,255,0.05);
       backdrop-filter: blur(16px);
       border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 16px;
       padding: 2em;
+      border-radius: 16px;
       box-shadow: 0 0 40px rgba(0,0,0,0.4);
       text-align: center;
-      max-width: 400px;
       width: 90%;
+      max-width: 400px;
     }
     h1 {
-      font-size: 2.2em;
+      font-size: 2em;
+      color: #00aaff;
       margin-bottom: 0.2em;
-      color: var(--primary);
     }
     .slogan {
       font-size: 1em;
@@ -44,39 +37,30 @@
       margin-bottom: 1.5em;
     }
     input, button {
+      width: 100%;
       font-size: 1em;
       padding: 0.6em;
       margin: 0.4em 0;
       border: none;
       border-radius: 8px;
-      width: 100%;
     }
     input {
-      background: #222;
-      color: #eee;
+      background: #1c1c1c;
+      color: #fff;
     }
     button {
-      background: var(--primary);
+      background: #00aaff;
       color: #000;
       font-weight: bold;
       cursor: pointer;
-      transition: 0.2s ease;
     }
     button:hover {
-      background: #0091dd;
-    }
-    .footer {
-      margin-top: 2em;
-      font-size: 0.9em;
+      background: #008ed0;
     }
     a {
-      color: var(--primary);
+      color: #00aaff;
       text-decoration: none;
-    }
-    #lobby-list button {
-      display: block;
-      margin: 0.3em auto;
-      background: #444;
+      font-size: 0.9em;
     }
   </style>
 </head>
@@ -89,48 +73,26 @@
     <input id="join-code" placeholder="Join with Lobby Code" />
     <button onclick="joinGame()">🔗 Join Game</button>
 
-    <div id="lobby-list"></div>
-
-    <div class="footer">
-      <a href="/Conqueror-games/forum.html">🗨️ Visit the Forum</a>
-    </div>
+    <p><a href="forum.html">🗨️ Visit the Forum</a></p>
   </div>
 
   <script type="module">
-    import { getActiveUserCount } from "./user-tracker.js";
-    import { spawnLobbies } from "./lobby.js";
+    import { getActiveUserCount } from './user-tracker.js';
+    import { spawnLobbies } from './lobby.js';
 
-    const base = "/Conqueror-games";
-
-    window.createGame = function () {
+    function createGame() {
       const code = Math.random().toString(36).substring(2, 7).toUpperCase();
-      window.location.href = `${base}/game.html?lobby=${code}`;
-    };
+      window.location.href = `./game.html?lobby=${code}`;
+    }
 
-    window.joinGame = function () {
+    function joinGame() {
       const code = document.getElementById("join-code").value.trim().toUpperCase();
-      if (code) window.location.href = `${base}/game.html?lobby=${code}`;
-    };
-
-    function renderLobbies(list) {
-      const div = document.getElementById("lobby-list");
-      div.innerHTML = "<h3>Available Lobbies</h3>";
-      list.forEach(code => {
-        const btn = document.createElement("button");
-        btn.textContent = `Join ${code}`;
-        btn.onclick = () => window.location.href = `${base}/game.html?lobby=${code}`;
-        div.appendChild(btn);
-      });
+      if (code) window.location.href = `./game.html?lobby=${code}`;
     }
 
-    function updateLobbyList() {
-      const count = getActiveUserCount();
-      const lobbies = spawnLobbies(count);
-      renderLobbies(lobbies);
-    }
-
-    updateLobbyList();
-    setInterval(updateLobbyList, 15000);
+    // Optional: log lobby spawn based on active users
+    console.log("Active users:", getActiveUserCount());
+    console.log("Spawned lobbies:", spawnLobbies(getActiveUserCount()));
   </script>
 </body>
 </html>
