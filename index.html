@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Conquerest Command Center</title>
+  <title>Conquerest Lobby</title>
   
-  <!-- Leaflet CSS for map rendering -->
+  <!-- (Optional) Leaflet CSS if needed elsewhere -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
-        integrity="sha256-sA+eCHd2nd3b3BWHjJ6LTkY5mmKUIoTcNTszE1M6zgg=" 
-        crossorigin=""/>
-  
-  <!-- Military-style UI CSS -->
+        integrity="sha256-sA+eCHd2nd3b3BWHjJ6LTkY5mmKUIoTcNTszE1M6zgg=" crossorigin=""/>
+
+  <!-- Military-Style UI CSS -->
   <style>
     body {
       background: #1b1b1b;
@@ -22,7 +21,7 @@
     header {
       background: #222;
       text-align: center;
-      padding: 10px 0;
+      padding: 10px;
       border-bottom: 2px solid #5a5;
     }
     header h1 {
@@ -53,7 +52,6 @@
     #game-container {
       padding: 20px;
     }
-    /* Section layout */
     section {
       display: none;
       padding: 10px;
@@ -61,98 +59,95 @@
     section.active {
       display: block;
     }
-    /* Player stats HUD styling */
+    /* Lobby Card Styles */
+    .lobby-card {
+      background: #222;
+      border: 2px solid #3af;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 10px 0;
+    }
+    .lobby-card h3 {
+      margin: 0 0 10px;
+      color: #0f0;
+    }
+    .lobby-card p {
+      margin: 5px 0;
+    }
+    .lobby-card button {
+      background: #444;
+      border: none;
+      color: #cfc;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      border-radius: 4px;
+    }
+    .lobby-card button:hover {
+      background: #555;
+    }
+    /* Player Stats HUD */
     #player-stats {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
       background: #111;
       color: #0f0;
       border: 2px solid #3af;
-      padding: 10px;
+      padding: 15px;
       border-radius: 6px;
       font-family: monospace;
-    }
-    /* Reward shop styling */
-    #reward-shop {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: #222;
-      color: #fff;
-      border: 2px solid #3af;
-      padding: 10px;
-      border-radius: 6px;
-      font-family: sans-serif;
-      font-size: 14px;
-    }
-    /* Popup fade-out animation */
-    @keyframes fadeOut {
-      from { opacity: 1; }
-      to   { opacity: 0; }
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Conquerest Command Center</h1>
+    <h1>Conquerest Lobby</h1>
   </header>
   
-  <!-- Command-style Navbar -->
+  <!-- Command-Style Navbar -->
   <nav class="navbar">
-    <button onclick="showSection('home')">Home</button>
-    <button onclick="showSection('shop')">Shop</button>
+    <button onclick="showSection('lobby')">Lobby</button>
     <button onclick="showSection('stats')">Stats</button>
     <button onclick="login()">Login</button>
   </nav>
   
   <!-- Main Container -->
   <main id="game-container">
-    <!-- Home Section: Contains the game map -->
-    <section id="home-section" class="active">
-      <div id="map" style="height: 500px;"></div>
+    <!-- Lobby Section: Displays real lobby cards -->
+    <section id="lobby-section" class="active">
+      <div id="lobby-list">
+        <!-- Real lobby cards will be dynamically generated here -->
+      </div>
     </section>
-    <!-- Shop Section: Reward Center (achievements, shop, unlockables) -->
-    <section id="shop-section">
-      <div id="reward-shop"></div>
-    </section>
-    <!-- Stats Section: Player stats display -->
+    
+    <!-- Stats Section: Display player stats -->
     <section id="stats-section">
-      <div id="player-stats"></div>
+      <div id="player-stats">
+        <!-- Player stats rendered here after login -->
+      </div>
     </section>
   </main>
   
-  <footer style="text-align:center; padding: 10px; background:#333;">
+  <footer style="text-align: center; padding: 10px; background: #333;">
     <p>&copy; 2025 Conquerest. All rights reserved.</p>
   </footer>
   
-  <!-- Load Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
-          integrity="sha256-o9N1j7p+Wj3E1X81miSzXok1sI2XbN7qCO//+vD1d2s=" 
-          crossorigin=""></script>
-  
-  <!-- Game Engine Module -->
+  <!-- Firebase & Player System: Authentication & Stats -->
   <script type="module">
-    // This should initialize your game and the map on the #map element.
-    import "./engine.js";
-  </script>
-  
-  <!-- Player System: Firebase login and persistent stat management -->
-  <script type="module">
-    import { loginWithGoogle } from "./player-system.js";
+    import { loginWithGoogle, renderPlayerStats } from "./player-system.js";
     window.login = async () => {
       try {
         const user = await loginWithGoogle();
         if (user) {
           alert(`Welcome, ${user.displayName}!`);
+          renderPlayerStats("player-stats");
         }
       } catch (error) {
-        console.error("Login error:", error);
+        console.error("Login failed:", error);
       }
     }
   </script>
   
-  <!-- Reward Center Initialization -->
+  <!-- Reward Center Initialization (if desired for notifications/achievements) -->
   <script type="module">
     import { initRewardCenter } from "./reward-center.js";
     window.addEventListener("load", () => {
@@ -163,20 +158,77 @@
   <!-- Navigation Helper Script -->
   <script>
     function showSection(section) {
-      // Hide all sections
-      document.getElementById("home-section").classList.remove("active");
-      document.getElementById("shop-section").classList.remove("active");
+      document.getElementById("lobby-section").classList.remove("active");
       document.getElementById("stats-section").classList.remove("active");
       
-      // Show selected section
-      if (section === "home") {
-        document.getElementById("home-section").classList.add("active");
-      } else if (section === "shop") {
-        document.getElementById("shop-section").classList.add("active");
+      if (section === "lobby") {
+        document.getElementById("lobby-section").classList.add("active");
       } else if (section === "stats") {
         document.getElementById("stats-section").classList.add("active");
       }
     }
   </script>
+  
+  <!-- Real Lobby Logic: Fetch and display lobby cards from Firestore -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // Firebase configuration (the same as in player-system.js)
+    const firebaseConfig = {
+      apiKey: "AIzaSyAfSrEl8htKuV5HzTK0MpL8p5SqaRMX1hU",
+      authDomain: "conquerorauth.firebaseapp.com",
+      projectId: "conquerorauth",
+      storageBucket: "conquerorauth.firebasestorage.app",
+      messagingSenderId: "679847369965",
+      appId: "1:679847369965:web:68662e04e57c4b40d380e4",
+      measurementId: "G-D05994C1CP"
+    };
+
+    // Initialize Firebase and Firestore
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function fetchLobbies() {
+      const lobbyList = document.getElementById("lobby-list");
+      lobbyList.innerHTML = ""; // Clear any existing banners
+
+      try {
+        const querySnapshot = await getDocs(collection(db, "lobbies"));
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const card = document.createElement("div");
+          card.classList.add("lobby-card");
+
+          // Format timestamp to local string if available
+          const startTime = data.startTime
+            ? new Date(data.startTime.seconds * 1000).toLocaleString()
+            : "TBD";
+          const inGameYear = data.inGameYear || "Unknown";
+          const playersCount = data.playersCount || 0;
+          const lobbyName = data.lobbyName || "Lobby";
+
+          card.innerHTML = `
+            <h3>${lobbyName}</h3>
+            <p>Start Time: ${startTime}</p>
+            <p>In-Game Year: ${inGameYear}</p>
+            <p>Players: ${playersCount}</p>
+            <button onclick="joinLobby('${doc.id}')">Join Lobby</button>
+          `;
+          lobbyList.appendChild(card);
+        });
+      } catch (error) {
+        console.error("Error fetching lobbies:", error);
+      }
+    }
+
+    window.joinLobby = function(lobbyId) {
+      // Redirect to game.html, passing the lobby ID as a query parameter
+      window.location.href = "game.html?lobby=" + encodeURIComponent(lobbyId);
+    };
+
+    window.addEventListener("load", fetchLobbies);
+  </script>
 </body>
 </html>
+
