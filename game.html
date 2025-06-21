@@ -1,106 +1,93 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Conquerest - Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
   <style>
     body {
       margin: 0;
       display: flex;
-      height: 100vh;
       font-family: 'Segoe UI', sans-serif;
-      background: #101820;
+      background: #0b1119;
       color: #eee;
+      height: 100vh;
     }
     #map-container {
       flex: 2;
+      background: #1d2b3a;
       position: relative;
-      background: #1c2b3a;
     }
     #sidebar {
       flex: 1;
-      background: #141e26;
+      background: #111a23;
       display: flex;
       flex-direction: column;
       padding: 1em;
-      overflow: hidden;
+    }
+    #status {
+      font-weight: bold;
+      margin-bottom: 1em;
+      color: #00bfff;
     }
     #event-log {
       flex: 1;
-      background: #0f161e;
-      margin-top: 1em;
-      padding: 0.5em;
       overflow-y: auto;
-      font-size: 0.95em;
-      border: 1px solid #333;
-    }
-    #status-banner {
-      font-weight: bold;
-      color: #0af;
-    }
-    canvas {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 1;
+      background: #0d141b;
+      border: 1px solid #222;
+      padding: 0.5em;
+      font-size: 0.9em;
     }
   </style>
 </head>
 <body>
   <div id="map-container">
     <canvas id="game-canvas"></canvas>
-    <!-- Add Leaflet/Map canvas or SVG here -->
+    <!-- Add Leaflet map or custom render here -->
   </div>
-
   <div id="sidebar">
-    <div id="status-banner">🔷 Connected to lobby: ...</div>
+    <div id="status">🔷 Connecting...</div>
     <div id="event-log">System initializing...</div>
   </div>
 
-  <!-- Real-time multiplayer client -->
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-
-  <!-- Game modules -->
   <script type="module">
-    import { initializeMap, updateMapFromData } from "./city-logic.js";
-    import { startUnits, moveUnit } from "./units.js";
-    import { initializeFog, updateFog } from "./fog.js";
+    import { initializeMap } from './city-logic.js';
+    import { startUnits } from './units.js';
 
     const params = new URLSearchParams(location.search);
     const lobby = params.get("lobby") || "ROOM-0";
-    document.getElementById("status-banner").textContent = `🔷 Connected to lobby: ${lobby}`;
 
-    const socket = io("http://localhost:3000"); // Change if deployed
+    const socket = io(); // Use default origin or specify remote server
+
+    const log = (msg) => {
+      const logDiv = document.getElementById("event-log");
+      const line = document.createElement("div");
+      line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      logDiv.appendChild(line);
+      logDiv.scrollTop = logDiv.scrollHeight;
+    };
 
     socket.on("connect", () => {
-      log(`🛰️ Connected as ${socket.id}`);
+      document.getElementById("status").textContent = `🔷 Connected: ${lobby}`;
       socket.emit("join-lobby", lobby);
+      log("🛰 Connected to server");
     });
 
     socket.on("map-update", (data) => {
-      log(`📦 Update received`);
-      updateMapFromData(data);
+      log("📦 Map update received");
+      // updateMap(data);
     });
 
-    function sendMove(moveData) {
-      socket.emit("map-update", { lobby, ...moveData });
+    function sendMove(data) {
+      socket.emit("map-update", { lobby, ...data });
     }
 
-    function log(msg) {
-      const log = document.getElementById("event-log");
-      const entry = document.createElement("div");
-      entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
-      log.appendChild(entry);
-      log.scrollTop = log.scrollHeight;
-    }
-
-    // Initialize game state
+    // Initialize game modules
     initializeMap();
     startUnits();
-    initializeFog();
-    log("🌍 Game engine initialized");
+    log("⚙️ Game initialized");
   </script>
 </body>
 </html>
