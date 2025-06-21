@@ -233,7 +233,7 @@
     <!-- Contacts Page -->
     <div id="page-contacts" class="page">
       <h2>Contacts</h2>
-      <p>Contact us at support@conquerest.com for assistance and inquiries.</p>
+      <p>Contact us at woowarey@gmail.com(temporary email) for assistance and inquiries.</p>
     </div>
     <!-- Creator Page -->
     <div id="page-creator" class="page">
@@ -286,7 +286,7 @@
         if (adminEmails.includes(user.email)) {
           window.userRole = "admin";
           document.getElementById("adminTab").style.display = "inline-block";
-          document.getElementById("statusMessage").textContent = "Admin access granted. Unlimited tickets assigned.";
+          document.getElementById("statusMessage").textContent = "Welcome admin user..";
         } else {
           window.userRole = "user";
           document.getElementById("statusMessage").textContent = "Game is undergoing updates. Please check back later.";
@@ -389,7 +389,7 @@
     
     // Fetch real repository file list from GitHub API
     window.listRepoFiles = async function(isOverlay = false) {
-      const repoUrl = "https://api.github.com/repos/yunus662/conquerest/contents/";
+      const repoUrl = "https://github.com/yunus662/Conqueror-games/tree/revised";
       try {
         const response = await fetch(repoUrl);
         if (!response.ok) throw new Error("Failed to fetch repository contents");
