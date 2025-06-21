@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Conquerest | Tactical Command</title>
+  <title>Conquerest | Command Lobby</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
       font-family: 'Share Tech Mono', monospace;
-      background: radial-gradient(ellipse at top, #0c0f14, #05070a);
+      background: #0a0f14;
       color: #00ffcc;
       display: flex;
       flex-direction: column;
@@ -32,10 +32,6 @@
       text-transform: uppercase;
     }
 
-    header .nav-link:hover {
-      text-decoration: underline;
-    }
-
     .console {
       flex: 1;
       display: flex;
@@ -55,13 +51,13 @@
       text-align: center;
     }
 
-    .command-box h1 {
+    h1 {
       font-size: 2em;
       margin-bottom: 0.2em;
       color: #00ffd0;
     }
 
-    .command-box .tagline {
+    .tagline {
       font-size: 1em;
       margin-bottom: 1.5em;
       color: #00ffccaa;
@@ -121,25 +117,16 @@
 
   <footer>Created by yaay | Intel: <a href="mailto:woowarey@gmail.com">woowarey@gmail.com</a> | Discord: _yaayyy</footer>
 
-  <script type="module">
-    import { getActiveUserCount } from './user-tracker.js';
-    import { spawnLobbies } from './lobby.js';
-
-    window.createGame = function () {
+  <script>
+    function createGame() {
       const code = Math.random().toString(36).substring(2, 7).toUpperCase();
-      window.location.href = `./game.html?lobby=${code}`;
-    };
+      window.location.href = `game.html?lobby=${code}`;
+    }
 
-    window.joinGame = function () {
+    function joinGame() {
       const code = document.getElementById("join-code").value.trim().toUpperCase();
-      if (code) window.location.href = `./game.html?lobby=${code}`;
-    };
-
-    // Optional logs for dev
-    const count = getActiveUserCount();
-    const lobbies = spawnLobbies(count);
-    console.log("Active users:", count);
-    console.log("Spawned lobbies:", lobbies);
+      if (code) window.location.href = `game.html?lobby=${code}`;
+    }
   </script>
 </body>
 </html>
