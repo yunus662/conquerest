@@ -3,221 +3,323 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Conquerest</title>
+  <title>Conquerest - Command Your Empire</title>
   <style>
     :root {
-      --dark: #141416;
+      --bg-dark: #141416;
+      --bg-medium: #1f1f22;
+      --bg-light: #222;
+      --text-light: #f0f0f0;
       --accent: #e74c3c;
-      --light: #f0f0f0;
-      --border: #2c2c2e;
+      --accent-dark: #c0392b;
+      --border-color: #2c2c2e;
     }
-    * {
-      box-sizing: border-box;
-    }
-    html, body {
-      margin: 0;
-      padding: 0;
+
+    /* Reset and Base */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--dark);
-      color: var(--light);
+      background: var(--bg-dark);
+      color: var(--text-light);
+      line-height: 1.6;
     }
-    header.hero {
-      position: relative;
-      height: 100vh;
-      background: url('https://source.unsplash.com/1920x1080/?war,battlefield') center center / cover no-repeat;
+    a { text-decoration: none; color: inherit; }
+
+    /* Navigation Bar */
+    nav#navbar {
+      background: var(--bg-medium);
+      border-bottom: 1px solid var(--border-color);
+      padding: 10px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    header.hero::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.65);
-    }
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      padding-top: 25vh;
-    }
-    .hero-content h1 {
-      font-size: 3.5em;
-      margin-bottom: 0.5em;
-    }
-    .hero-content p {
-      font-size: 1.2em;
-      opacity: 0.9;
-    }
-    .hero-buttons {
-      margin-top: 2em;
-    }
-    .hero-buttons button {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      margin: 0 10px;
-      font-size: 1em;
-      cursor: pointer;
-      border-radius: 4px;
-      transition: background 0.3s;
-    }
-    .hero-buttons button:hover {
-      background: #c0392b;
-    }
-    nav.main-nav {
-      display: none;
-      background: #1f1f22;
-      border-bottom: 1px solid var(--border);
-      padding: 15px 30px;
-    }
-    nav.main-nav ul {
+    nav#navbar ul {
       list-style: none;
       display: flex;
-      gap: 30px;
-      margin: 0;
-      padding: 0;
-    }
-    nav.main-nav li {
-      cursor: pointer;
-      font-weight: 500;
-      color: var(--light);
-    }
-    nav.main-nav li:hover {
-      text-decoration: underline;
-    }
-    section.lobbies {
-      padding: 60px 40px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 20px;
     }
-    .lobby-card {
-      background: #1d1d1f;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+    nav#navbar li {
+      cursor: pointer;
+      padding: 5px 10px;
+      transition: background 0.25s;
     }
-    .lobby-card h3 {
-      margin-top: 0;
-      font-size: 1.5em;
-    }
-    .lobby-card p {
-      margin: 6px 0;
-      color: #ccc;
-    }
-    .lobby-card button {
-      margin-top: 15px;
+    nav#navbar li:hover {
       background: var(--accent);
-      color: #fff;
+      color: #111;
+    }
+    nav#navbar .right {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    /* Profile Card (shown after login) */
+    #profileCard {
+      display: none;
+      background: var(--bg-light);
+      padding: 10px 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #profileCard img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    #profileCard h3, #profileCard p {
+      margin: 0;
+    }
+    #profileCard button {
+      background: var(--accent);
       border: none;
-      padding: 10px;
+      padding: 5px 10px;
       border-radius: 4px;
       cursor: pointer;
+      transition: background 0.25s;
     }
-    .lobby-card button:hover {
-      background: #c0392b;
+    #profileCard button:hover {
+      background: var(--accent-dark);
+      color: #111;
     }
-    footer {
-      text-align: center;
+
+    /* Pages Container */
+    #pages {
+      padding: 30px;
+    }
+    .page {
+      display: none;
+    }
+    /* Default (after login) message for non-admin users */
+    #updateNotice {
+      display: none;
       padding: 20px;
-      color: #777;
-      border-top: 1px solid var(--border);
+      background: var(--bg-medium);
+      text-align: center;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      margin-top: 20px;
+    }
+    
+    /* Admin Console */
+    #adminConsole {
+      display: none;
+      padding: 20px;
+      background: var(--bg-medium);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      margin-top: 20px;
+    }
+    #adminConsole h2 {
+      margin-bottom: 15px;
+    }
+    #adminConsole button {
+      background: var(--accent);
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+      transition: background 0.25s;
+    }
+    #adminConsole button:hover {
+      background: var(--accent-dark);
+      color: #111;
+    }
+    /* Shutdown Overlay */
+    #shutdownOverlay {
+      display: none;
+      position: fixed;
+      top:0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-dark);
+      z-index: 1000;
+      color: var(--accent);
+      text-align: center;
+      padding-top: 15%;
     }
   </style>
 </head>
 <body>
-  <header class="hero">
-    <div class="hero-content">
-      <h1>Conquerest</h1>
-      <p>Forge alliances. Command armies. Rewrite history.</p>
-      <div class="hero-buttons">
-        <button onclick="login()">Login with Google</button>
-        <button onclick="scrollToLobbies()">View Lobbies</button>
-      </div>
-    </div>
-  </header>
-
-  <nav class="main-nav" id="main-nav">
-    <ul>
-      <li onclick="scrollToLobbies()">Lobbies</li>
-      <li onclick="alert('Conquerest is built by the Bestdominion team.')">Creator</li>
-      <li onclick="alert('Contact us at contact@conquerest.dev')">Contact</li>
-      <li onclick="alert('Conquerest is a global strategy game.')">About</li>
+  <!-- Navigation Bar -->
+  <nav id="navbar">
+    <ul id="navLeft">
+      <li onclick="showPage('forum')">Forum</li>
+      <li onclick="showPage('about')">About</li>
+      <li onclick="showPage('contacts')">Contacts</li>
+      <li onclick="showPage('creator')">Creator</li>
+      <!-- Admin Console tab: only visible for admin -->
+      <li id="adminTab" style="display:none;" onclick="showPage('admin')">Admin Console</li>
     </ul>
+    <div class="right" id="navRight">
+      <button id="loginButton" onclick="login()">Login with Google</button>
+      <!-- Profile card will be inserted here when logged in -->
+      <div id="profileCard"></div>
+    </div>
   </nav>
 
-  <section class="lobbies" id="lobbies-section">
-    <div id="lobby-list">
-      <p id="lobby-status" style="color: #999;">Loading lobbies...</p>
+  <!-- Pages Container -->
+  <div id="pages">
+    <!-- Forum Page -->
+    <div id="page-forum" class="page">
+      <h2>Forum</h2>
+      <p>Engage with fellow commanders and discuss strategies.</p>
     </div>
-  </section>
+    <!-- About Page -->
+    <div id="page-about" class="page">
+      <h2>About</h2>
+      <p>Conquerest is a global strategy game where every decision shapes your destiny.</p>
+    </div>
+    <!-- Contacts Page -->
+    <div id="page-contacts" class="page">
+      <h2>Contacts</h2>
+      <p>Contact us at support@conquerest.com for any queries or support.</p>
+    </div>
+    <!-- Creator Page -->
+    <div id="page-creator" class="page">
+      <h2>Creator</h2>
+      <p>Developed by a passionate team dedicated to redefining strategy gaming.</p>
+    </div>
+    <!-- Admin Console Page -->
+    <div id="page-admin" class="page">
+      <h2>Admin Console</h2>
+      <div id="adminConsole">
+        <button onclick="shutdownGame()">Shutdown Game</button>
+        <h3>Assign Role</h3>
+        <input type="email" id="role-email" placeholder="User Email" style="padding:8px;"/>
+        <select id="role-select" style="padding:8px; margin-left:5px;">
+          <option value="moderator">Moderator</option>
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+        <button onclick="assignRole()">Assign</button>
+      </div>
+    </div>
+    <!-- Update Notice for non-admin users -->
+    <div id="updateNotice">
+      <h2>Notice</h2>
+      <p>Game is undergoing updates. Please check back later.</p>
+    </div>
+  </div>
 
-  <footer>
-    &copy; 2025 Conquerest. All rights reserved.
-  </footer>
+  <!-- Shutdown Overlay -->
+  <div id="shutdownOverlay">
+    <h1>Game Shutdown</h1>
+    <p>The game is currently shut down for maintenance.</p>
+    <h3>Game Files:</h3>
+    <ul style="list-style: none;">
+      <li>engine.js</li>
+      <li>player-system.js</li>
+      <li>lobbies.js</li>
+      <li>reward-center.js</li>
+      <li>index.html</li>
+    </ul>
+    <button onclick="restartGame()" style="padding: 10px 20px; margin-top:20px; background: var(--accent); border: none; color:#fff; border-radius: 4px; cursor:pointer;">Restart Game</button>
+  </div>
 
-  <!-- Firebase Login + Stats -->
+  <!-- Firebase & Custom Script Integration -->
   <script type="module">
     import { loginWithGoogle, renderPlayerStats } from "./player-system.js";
-    window.login = async () => {
+    
+    // Global variables for current user and role
+    window.currentUser = null;
+    window.userRole = "guest"; // Possible values: guest, user, moderator, admin
+    
+    window.login = async function() {
       try {
         const user = await loginWithGoogle();
-        if (user) {
-          document.getElementById("main-nav").style.display = "block";
-          alert(`Welcome, ${user.displayName}!`);
-          renderPlayerStats("player-stats");
+        window.currentUser = user;
+        // Hide login button; show profile card
+        document.getElementById("loginButton").style.display = "none";
+        renderProfileCard(user);
+        
+        // Determine role based on email
+        const adminEmails = ["imyaay234@gmail.com", "woowarey@gmail.com"];
+        if(adminEmails.includes(user.email)) {
+          window.userRole = "admin";
+          // Simulate unlimited tickets
+          console.log("Admin privileges granted: Unlimited tickets assigned.");
+          document.getElementById("adminTab").style.display = "inline-block";
+        } else {
+          window.userRole = "user";
+          // For non-admins (and non-moderators), show update notice
+          document.getElementById("updateNotice").style.display = "block";
         }
+        // Optionally render player stats in profile card
+        renderPlayerStats("profileStats");
       } catch (err) {
         console.error("Login failed:", err);
       }
     };
-  </script>
-
-  <!-- Lobby Logic -->
-  <script type="module">
-    import { fetchLobbies, joinLobby } from "./lobbies.js";
-
-    async function displayLobbies() {
-      const container = document.getElementById("lobby-list");
-      const status = document.getElementById("lobby-status");
-      container.innerHTML = "";
-      try {
-        const lobbies = await fetchLobbies();
-        if (lobbies.length === 0) {
-          status.textContent = "No active lobbies.";
-          return;
-        }
-        lobbies.forEach(lobby => {
-          const card = document.createElement("div");
-          card.className = "lobby-card";
-          card.innerHTML = `
-            <h3>${lobby.lobbyName}</h3>
-            <p><strong>Start:</strong> ${lobby.startTime}</p>
-            <p><strong>Year:</strong> ${lobby.inGameYear}</p>
-            <p><strong>Players:</strong> ${lobby.playersCount}</p>
-            <button onclick="window.joinLobby('${lobby.id}')">Join Lobby</button>
-          `;
-          container.appendChild(card);
-        });
-      } catch (err) {
-        status.textContent = "Failed to load lobbies.";
-        console.error("displayLobbies:", err);
+    
+    window.logout = async function() {
+      // Implement Firebase signOut if needed (assume it's in player-system.js)
+      window.currentUser = null;
+      window.userRole = "guest";
+      // Reset UI
+      document.getElementById("loginButton").style.display = "inline-block";
+      document.getElementById("profileCard").innerHTML = "";
+      document.getElementById("adminTab").style.display = "none";
+      document.getElementById("updateNotice").style.display = "none";
+      hideAllPages();
+    };
+    
+    function renderProfileCard(user) {
+      const container = document.getElementById("profileCard");
+      container.innerHTML = `
+        <img src="${user.photoURL}" alt="Profile Picture" />
+        <div>
+          <h3>${user.displayName}</h3>
+          <p>${user.email}</p>
+        </div>
+        <button onclick="logout()">Logout</button>
+      `;
+      container.style.display = "flex";
+    }
+    
+    function hideAllPages() {
+      const pages = document.getElementsByClassName("page");
+      for(let page of pages){
+        page.style.display = "none";
       }
+      document.getElementById("updateNotice").style.display = "none";
     }
-
-    window.joinLobby = joinLobby;
-    window.addEventListener("load", displayLobbies);
-  </script>
-
-  <script>
-    function scrollToLobbies() {
-      document.getElementById("lobbies-section").scrollIntoView({ behavior: 'smooth' });
+    
+    function showPage(page) {
+      hideAllPages();
+      document.getElementById("page-" + page).style.display = "block";
     }
+    
+    // Admin console functions
+    function shutdownGame() {
+      // Display shutdown overlay and hide main pages
+      document.getElementById("shutdownOverlay").style.display = "block";
+      document.getElementById("pages").style.display = "none";
+    }
+    
+    function restartGame() {
+      document.getElementById("shutdownOverlay").style.display = "none";
+      document.getElementById("pages").style.display = "block";
+    }
+    
+    function assignRole() {
+      const email = document.getElementById("role-email").value;
+      const role = document.getElementById("role-select").value;
+      // Here you would update the user's role in your database; we'll simulate with an alert.
+      alert(`Role '${role}' assigned to ${email}.`);
+    }
+    
+    // (Optional) You could also set up navigation events here.
+    // For now, we assume that clicking the nav items calls showPage('forum'), etc.
   </script>
+  
+  <!-- Dummy container for additional profile stats if needed -->
+  <div id="profileStats" style="display:none;"></div>
+  
 </body>
 </html>
-
-
