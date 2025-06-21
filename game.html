@@ -1,54 +1,59 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Conquerest - Game</title>
+  <title>Conquerest Tactical Operations</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       margin: 0;
+      font-family: 'Share Tech Mono', monospace;
+      background: #0a0f14;
+      color: #00ffcc;
       display: flex;
-      font-family: 'Segoe UI', sans-serif;
-      background: #0b1119;
-      color: #eee;
       height: 100vh;
     }
-    #map-container {
+
+    #map-area {
       flex: 2;
-      background: #1d2b3a;
       position: relative;
+      background: #151e27;
     }
+
     #sidebar {
       flex: 1;
-      background: #111a23;
+      background: #10141a;
+      border-left: 2px solid #00ffcc33;
       display: flex;
       flex-direction: column;
       padding: 1em;
     }
+
     #status {
       font-weight: bold;
+      color: #00ffcc;
       margin-bottom: 1em;
-      color: #00bfff;
     }
+
     #event-log {
       flex: 1;
       overflow-y: auto;
-      background: #0d141b;
-      border: 1px solid #222;
+      background: #0d1218;
       padding: 0.5em;
+      border: 1px solid #00ffcc33;
       font-size: 0.9em;
     }
   </style>
 </head>
 <body>
-  <div id="map-container">
+  <div id="map-area">
     <canvas id="game-canvas"></canvas>
-    <!-- Add Leaflet map or custom render here -->
+    <!-- Replace with Leaflet or custom map -->
   </div>
+
   <div id="sidebar">
-    <div id="status">🔷 Connecting...</div>
-    <div id="event-log">System initializing...</div>
+    <div id="status">🔷 Connecting to Tactical Lobby...</div>
+    <div id="event-log">Initializing campaign interface...</div>
   </div>
 
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
@@ -59,35 +64,35 @@
     const params = new URLSearchParams(location.search);
     const lobby = params.get("lobby") || "ROOM-0";
 
-    const socket = io(); // Use default origin or specify remote server
+    const socket = io();
 
     const log = (msg) => {
-      const logDiv = document.getElementById("event-log");
-      const line = document.createElement("div");
-      line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
-      logDiv.appendChild(line);
-      logDiv.scrollTop = logDiv.scrollHeight;
+      const logPanel = document.getElementById("event-log");
+      const entry = document.createElement("div");
+      entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      logPanel.appendChild(entry);
+      logPanel.scrollTop = logPanel.scrollHeight;
     };
 
     socket.on("connect", () => {
-      document.getElementById("status").textContent = `🔷 Connected: ${lobby}`;
+      document.getElementById("status").textContent = `🔷 Connected to: ${lobby}`;
       socket.emit("join-lobby", lobby);
-      log("🛰 Connected to server");
+      log("🛰️ Connection established");
     });
 
     socket.on("map-update", (data) => {
-      log("📦 Map update received");
-      // updateMap(data);
+      log("📦 Incoming update received");
+      // TODO: update your map/game state here
     });
 
     function sendMove(data) {
       socket.emit("map-update", { lobby, ...data });
     }
 
-    // Initialize game modules
+    // Initialize your game logic
     initializeMap();
     startUnits();
-    log("⚙️ Game initialized");
+    log("✔ Tactical systems online");
   </script>
 </body>
 </html>
