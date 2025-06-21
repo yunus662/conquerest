@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bestdominion Lobby</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      padding: 2em;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0b0f1c;
+      color: #eee;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.2em;
+    }
+    input, button {
+      padding: 0.7em;
+      margin: 0.5em;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+    }
+    input {
+      width: 200px;
+    }
+    button {
+      background: #2196f3;
+      color: #fff;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1976d2;
+    }
+    #lobby, #lobby-list {
+      margin-top: 2em;
+    }
+    a {
+      color: #90caf9;
+      text-decoration: none;
+    }
+    #lobby-list button {
+      display: block;
+      margin: 0.3em auto;
+      background: #444;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌍 Bestdominion</h1>
+  <p>Conquer the world. Forge alliances. Make history.</p>
+
+  <div id="lobby">
+    <button onclick="createGame()">🎮 Start New Game</button><br/>
+    <input id="join-code" placeholder="Enter Lobby Code" />
+    <button onclick="joinGame()">🔗 Join Game</button>
+  </div>
+
+  <div id="lobby-list"></div>
+
+  <p style="margin-top: 2em;">
+    <a href="/Conqueror-games/forum.html">🗨️ Visit the Community Forum</a>
+  </p>
+
+  <script type="module">
+    import { getActiveUserCount } from "./data/user-tracker.js";
+
+    const base = "/Conqueror-games";
+
+    function createGame() {
+      const code = Math.random().toString(36).substring(2, 7).toUpperCase();
+      window.location.href = `${base}/game.html?lobby=${code}`;
+    }
+
+    function joinGame() {
+      const code = document.getElementById("join-code").value.trim().toUpperCase();
+      if (code) window.location.href = `${base}/game.html?lobby=${code}`;
+    }
+
+    function spawnLobbies() {
+      const count = getActiveUserCount();
+      const numLobbies = Math.max(1, Math.ceil(count / 4));
+      const lobbyList = Array.from({ length: numLobbies }, (_, i) => `ROOM-${i + 1}`);
+      localStorage.setItem("availableLobbies", JSON.stringify(lobbyList));
+      renderLobbies(lobbyList);
+    }
+
+    function renderLobbies(list) {
+      const div = document.getElementById("lobby-list");
+      div.innerHTML = "<h3>Available Lobbies</h3>";
+      list.forEach(code => {
+        const btn = document.createElement("button");
+        btn.textContent = `Join ${code}`;
+        btn.onclick = () => window.location.href = `${base}/game.html?lobby=${code}`;
+        div.appendChild(btn);
+      });
+    }
+
+    spawnLobbies();
+    setInterval(spawnLobbies, 15000);
+  </script>
+</body>
+</html>
