@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Conquerest Lobby</title>
   
-  <!-- (Optional) Leaflet CSS if needed elsewhere -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
-        integrity="sha256-sA+eCHd2nd3b3BWHjJ6LTkY5mmKUIoTcNTszE1M6zgg=" crossorigin=""/>
-
   <!-- Military-Style UI CSS -->
   <style>
     body {
@@ -115,14 +111,15 @@
     <!-- Lobby Section: Displays real lobby cards -->
     <section id="lobby-section" class="active">
       <div id="lobby-list">
-        <!-- Real lobby cards will be dynamically generated here -->
+        <!-- Lobby cards will be loaded here -->
+        <p id="lobby-status" style="color: #f33;">Loading lobbies...</p>
       </div>
     </section>
     
     <!-- Stats Section: Display player stats -->
     <section id="stats-section">
       <div id="player-stats">
-        <!-- Player stats rendered here after login -->
+        <!-- Player stats will be rendered here after login -->
       </div>
     </section>
   </main>
@@ -131,28 +128,38 @@
     <p>&copy; 2025 Conquerest. All rights reserved.</p>
   </footer>
   
-  <!-- Firebase & Player System: Authentication & Stats -->
+  <!-- Player System: Firebase Authentication and Stats -->
   <script type="module">
-    import { loginWithGoogle, renderPlayerStats } from "./player-system.js";
-    window.login = async () => {
-      try {
-        const user = await loginWithGoogle();
-        if (user) {
-          alert(`Welcome, ${user.displayName}!`);
-          renderPlayerStats("player-stats");
+    try {
+      import { loginWithGoogle, renderPlayerStats } from "./player-system.js";
+      window.login = async () => {
+        try {
+          const user = await loginWithGoogle();
+          if (user) {
+            alert(`Welcome, ${user.displayName}!`);
+            renderPlayerStats("player-stats");
+          }
+        } catch (error) {
+          console.error("Login error:", error);
         }
-      } catch (error) {
-        console.error("Login failed:", error);
-      }
+      };
+      console.log("Player system module loaded successfully.");
+    } catch (e) {
+      console.error("Error loading player system module:", e);
     }
   </script>
   
-  <!-- Reward Center Initialization (if desired for notifications/achievements) -->
+  <!-- Reward Center Initialization -->
   <script type="module">
-    import { initRewardCenter } from "./reward-center.js";
-    window.addEventListener("load", () => {
-      initRewardCenter();
-    });
+    try {
+      import { initRewardCenter } from "./reward-center.js";
+      window.addEventListener("load", () => {
+        initRewardCenter();
+        console.log("Reward center initialized.");
+      });
+    } catch (e) {
+      console.error("Error initializing reward center:", e);
+    }
   </script>
   
   <!-- Navigation Helper Script -->
@@ -166,69 +173,49 @@
       } else if (section === "stats") {
         document.getElementById("stats-section").classList.add("active");
       }
+      console.log("Switched to section:", section);
     }
   </script>
   
   <!-- Real Lobby Logic: Fetch and display lobby cards from Firestore -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-    // Firebase configuration (the same as in player-system.js)
-    const firebaseConfig = {
-      apiKey: "AIzaSyAfSrEl8htKuV5HzTK0MpL8p5SqaRMX1hU",
-      authDomain: "conquerorauth.firebaseapp.com",
-      projectId: "conquerorauth",
-      storageBucket: "conquerorauth.firebasestorage.app",
-      messagingSenderId: "679847369965",
-      appId: "1:679847369965:web:68662e04e57c4b40d380e4",
-      measurementId: "G-D05994C1CP"
-    };
-
-    // Initialize Firebase and Firestore
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    async function fetchLobbies() {
-      const lobbyList = document.getElementById("lobby-list");
-      lobbyList.innerHTML = ""; // Clear any existing banners
-
-      try {
-        const querySnapshot = await getDocs(collection(db, "lobbies"));
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          const card = document.createElement("div");
-          card.classList.add("lobby-card");
-
-          // Format timestamp to local string if available
-          const startTime = data.startTime
-            ? new Date(data.startTime.seconds * 1000).toLocaleString()
-            : "TBD";
-          const inGameYear = data.inGameYear || "Unknown";
-          const playersCount = data.playersCount || 0;
-          const lobbyName = data.lobbyName || "Lobby";
-
-          card.innerHTML = `
-            <h3>${lobbyName}</h3>
-            <p>Start Time: ${startTime}</p>
-            <p>In-Game Year: ${inGameYear}</p>
-            <p>Players: ${playersCount}</p>
-            <button onclick="joinLobby('${doc.id}')">Join Lobby</button>
-          `;
-          lobbyList.appendChild(card);
-        });
-      } catch (error) {
-        console.error("Error fetching lobbies:", error);
+    try {
+      import { fetchLobbies, joinLobby } from "./lobbies.js";
+      
+      async function displayLobbies() {
+        const lobbyListContainer = document.getElementById("lobby-list");
+        const lobbyStatus = document.getElementById("lobby-status");
+        lobbyListContainer.innerHTML = "";
+        try {
+          const lobbies = await fetchLobbies();
+          if (lobbies.length === 0) {
+            lobbyStatus.textContent = "No lobbies available.";
+            console.log("No lobbies found in Firestore.");
+            return;
+          }
+          lobbies.forEach(lobby => {
+            const card = document.createElement("div");
+            card.classList.add("lobby-card");
+            card.innerHTML = `
+              <h3>${lobby.lobbyName}</h3>
+              <p>Start Time: ${lobby.startTime}</p>
+              <p>In-Game Year: ${lobby.inGameYear}</p>
+              <p>Players: ${lobby.playersCount}</p>
+              <button onclick="joinLobby('${lobby.id}')">Join Lobby</button>
+            `;
+            lobbyListContainer.appendChild(card);
+          });
+          console.log("Lobbies displayed successfully.");
+        } catch (error) {
+          lobbyStatus.textContent = "Error loading lobbies.";
+          console.error("Error in displayLobbies:", error);
+        }
       }
+      
+      window.addEventListener("load", displayLobbies);
+    } catch (e) {
+      console.error("Error loading lobbies module:", e);
     }
-
-    window.joinLobby = function(lobbyId) {
-      // Redirect to game.html, passing the lobby ID as a query parameter
-      window.location.href = "game.html?lobby=" + encodeURIComponent(lobbyId);
-    };
-
-    window.addEventListener("load", fetchLobbies);
   </script>
 </body>
 </html>
-
