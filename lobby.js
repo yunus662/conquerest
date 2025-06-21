@@ -1,33 +1,14 @@
-// user-tracker.js
-const USER_ID = `user-${Math.random().toString(36).slice(2, 8)}`;
-const HEARTBEAT_INTERVAL = 10000; // 10 seconds
+// lobby.js
+export function spawnLobbies(activeUserCount = 1, usersPerLobby = 4) {
+  const numLobbies = Math.max(1, Math.ceil(activeUserCount / usersPerLobby));
+  const lobbies = [];
 
-function updatePresence() {
-  const now = Date.now();
-  const presence = JSON.parse(localStorage.getItem("activeUsers") || "{}");
-  presence[USER_ID] = now;
-  localStorage.setItem("activeUsers", JSON.stringify(presence));
-}
-
-function cleanupPresence() {
-  const now = Date.now();
-  const presence = JSON.parse(localStorage.getItem("activeUsers") || "{}");
-  for (const id in presence) {
-    if (now - presence[id] > 30000) delete presence[id]; // 30s timeout
+  for (let i = 0; i < numLobbies; i++) {
+    const code = `ROOM-${i + 1}`;
+    lobbies.push(code);
   }
-  localStorage.setItem("activeUsers", JSON.stringify(presence));
+
+  // Optionally save them locally for later use
+  localStorage.setItem("availableLobbies", JSON.stringify(lobbies));
+  return lobbies;
 }
-
-function getActiveUserCount() {
-  const presence = JSON.parse(localStorage.getItem("activeUsers") || "{}");
-  return Object.keys(presence).length;
-}
-
-// Start tracking
-setInterval(() => {
-  updatePresence();
-  cleanupPresence();
-}, HEARTBEAT_INTERVAL);
-
-// Expose count
-window.getActiveUserCount = getActiveUserCount;
