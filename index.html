@@ -3,101 +3,119 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Conquerest Lobby</title>
+  <title>Conquerest - Lobby</title>
   
-  <!-- Military-Style UI CSS -->
-  <!-- You can update or remove integrity if needed -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
-  />
-
+  <!-- Optionally remove integrity if it causes issues -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+        crossorigin=""/>
+  
   <style>
+    /* Reset & Base Styles */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: #1b1b1b;
-      color: #cfc;
+      background: #111;
+      color: #eee;
       font-family: 'Courier New', Courier, monospace;
-      margin: 0;
-      padding: 0;
+      line-height: 1.5;
     }
+    /* Header */
     header {
       background: #222;
+      padding: 20px;
       text-align: center;
-      padding: 10px;
-      border-bottom: 2px solid #5a5;
+      border-bottom: 3px solid #0f0;
     }
     header h1 {
-      margin: 0;
-      font-size: 2em;
+      font-size: 2.5em;
       color: #0f0;
+      text-transform: uppercase;
+      letter-spacing: 2px;
     }
-    nav.navbar {
+    /* Navigation */
+    nav {
+      background: #333;
       display: flex;
       justify-content: center;
-      background: #333;
       padding: 10px;
-      border-bottom: 2px solid #5a5;
+      gap: 15px;
     }
-    nav.navbar button {
+    nav button {
       background: #444;
-      border: none;
-      color: #cfc;
-      padding: 10px 15px;
-      margin: 0 5px;
+      border: 1px solid #0f0;
+      color: #0f0;
+      padding: 10px 20px;
+      font-size: 1em;
       cursor: pointer;
-      font-size: 16px;
-      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: background 0.3s;
     }
-    nav.navbar button:hover {
-      background: #555;
+    nav button:hover {
+      background: #0f0;
+      color: #111;
     }
-    #game-container {
+    /* Main Content Layout */
+    main {
+      display: flex;
       padding: 20px;
+      gap: 20px;
     }
-    section {
-      display: none;
-      padding: 10px;
+    /* Left column: Lobby Cards */
+    .lobby-container {
+      flex: 2;
     }
-    section.active {
-      display: block;
-    }
-    /* Lobby Card Styles */
     .lobby-card {
       background: #222;
-      border: 2px solid #3af;
-      border-radius: 6px;
+      border: 1px solid #0f0;
       padding: 15px;
-      margin: 10px 0;
+      margin-bottom: 15px;
+      border-radius: 5px;
     }
-    .lobby-card h3 {
-      margin: 0 0 10px;
+    .lobby-card h2 {
+      font-size: 1.5em;
       color: #0f0;
+      margin-bottom: 10px;
     }
     .lobby-card p {
       margin: 5px 0;
     }
     .lobby-card button {
       background: #444;
-      border: none;
-      color: #cfc;
+      border: 1px solid #0f0;
       padding: 8px 12px;
+      color: #0f0;
       cursor: pointer;
-      font-size: 14px;
-      border-radius: 4px;
+      margin-top: 10px;
+      text-transform: uppercase;
+      transition: background 0.3s;
     }
     .lobby-card button:hover {
-      background: #555;
+      background: #0f0;
+      color: #111;
     }
-    /* Player Stats HUD */
-    #player-stats {
-      background: #111;
-      color: #0f0;
-      border: 2px solid #3af;
+    /* Right column: Sidebar for Player Info & News */
+    .sidebar {
+      flex: 1;
+      background: #222;
       padding: 15px;
-      border-radius: 6px;
-      font-family: monospace;
+      border: 1px solid #0f0;
+      border-radius: 5px;
+    }
+    .sidebar h2 {
+      margin-bottom: 10px;
+      color: #0f0;
+      font-size: 1.5em;
+    }
+    .stats {
+      margin-top: 15px;
+    }
+    /* Footer */
+    footer {
+      background: #222;
+      text-align: center;
+      padding: 15px;
+      border-top: 3px solid #0f0;
       margin-top: 20px;
     }
   </style>
@@ -107,77 +125,66 @@
     <h1>Conquerest Lobby</h1>
   </header>
   
-  <!-- Command-Style Navbar -->
-  <nav class="navbar">
+  <!-- Navigation Bar -->
+  <nav>
     <button onclick="showSection('lobby')">Lobby</button>
     <button onclick="showSection('stats')">Stats</button>
     <button onclick="login()">Login</button>
   </nav>
   
-  <!-- Main Container -->
-  <main id="game-container">
-    <!-- Lobby Section: Displays lobby cards from Firestore -->
-    <section id="lobby-section" class="active">
+  <!-- Main Content -->
+  <main>
+    <!-- Left Column: Lobby Cards -->
+    <div class="lobby-container">
       <div id="lobby-list">
-        <p id="lobby-status" style="color: #f33;">Loading lobbies...</p>
+        <p id="lobby-status" style="color:#f33;">Loading lobbies...</p>
       </div>
-    </section>
-    
-    <!-- Stats Section: Display player stats -->
-    <section id="stats-section">
+    </div>
+    <!-- Right Column: Sidebar / Player Info -->
+    <div class="sidebar">
+      <h2>Player Info</h2>
       <div id="player-stats">
-        <!-- Player stats will appear here after login -->
+        <p style="color:#ccc;">Not logged in.</p>
       </div>
-    </section>
+      <div class="news" style="margin-top:20px;">
+        <h2>Latest News</h2>
+        <p style="color:#ccc;">Prepare for battle and claim your dominance!</p>
+      </div>
+    </div>
   </main>
   
-  <footer style="text-align: center; padding: 10px; background: #333;">
-    <p>&copy; 2025 Conquerest. All rights reserved.</p>
+  <footer>
+    <p>&copy; 2025 Conquerest. All Rights Reserved.</p>
   </footer>
   
-  <!-- Player System Module: Authentication and Stats -->
+  <!-- Scripts -->
+  
+  <!-- Player System: Authentication & Stats -->
   <script type="module">
     import { loginWithGoogle, renderPlayerStats } from "./player-system.js";
-    // Expose login function globally
     window.login = async () => {
       try {
         const user = await loginWithGoogle();
-        if (user) {
+        if(user) {
           alert(`Welcome, ${user.displayName}!`);
           renderPlayerStats("player-stats");
         }
-      } catch (error) {
+      } catch(error) {
         console.error("Login error:", error);
       }
     };
-    console.log("Player system module loaded successfully.");
   </script>
   
-  <!-- Reward Center Initialization -->
-  <script type="module">
-    import { initRewardCenter } from "./reward-center.js";
-    window.addEventListener("load", () => {
-      initRewardCenter();
-      console.log("Reward center initialized.");
-    });
-  </script>
-  
-  <!-- Navigation Helper (plain script) -->
+  <!-- Navigation Helper -->
   <script>
     function showSection(section) {
-      document.getElementById("lobby-section").classList.remove("active");
-      document.getElementById("stats-section").classList.remove("active");
-      
-      if (section === "lobby") {
-        document.getElementById("lobby-section").classList.add("active");
-      } else if (section === "stats") {
-        document.getElementById("stats-section").classList.add("active");
-      }
+      // In this layout, sections are always visible (lobby list and sidebar).
+      // Optionally, add behavior here if you want to toggle visibility.
       console.log("Switched to section:", section);
     }
   </script>
   
-  <!-- Lobby Logic: Fetch and Display Lobbies -->
+  <!-- Lobbies Logic: Fetch & Display Lobby Cards -->
   <script type="module">
     import { fetchLobbies, joinLobby } from "./lobbies.js";
     
@@ -187,31 +194,28 @@
       lobbyListContainer.innerHTML = "";
       try {
         const lobbies = await fetchLobbies();
-        if (lobbies.length === 0) {
+        if(lobbies.length === 0) {
           lobbyStatus.textContent = "No lobbies available.";
-          console.log("No lobbies found in Firestore.");
           return;
         }
         lobbies.forEach(lobby => {
           const card = document.createElement("div");
-          card.classList.add("lobby-card");
+          card.className = "lobby-card";
           card.innerHTML = `
-            <h3>${lobby.lobbyName}</h3>
-            <p>Start Time: ${lobby.startTime}</p>
-            <p>In-Game Year: ${lobby.inGameYear}</p>
-            <p>Players: ${lobby.playersCount}</p>
+            <h2>${lobby.lobbyName}</h2>
+            <p><strong>Start Time:</strong> ${lobby.startTime}</p>
+            <p><strong>In-Game Year:</strong> ${lobby.inGameYear}</p>
+            <p><strong>Players:</strong> ${lobby.playersCount}</p>
             <button onclick="window.joinLobby('${lobby.id}')">Join Lobby</button>
           `;
           lobbyListContainer.appendChild(card);
         });
-        console.log("Lobbies displayed successfully.");
       } catch (error) {
         lobbyStatus.textContent = "Error loading lobbies.";
         console.error("Error in displayLobbies:", error);
       }
     }
     
-    // Expose joinLobby globally for inline use
     window.joinLobby = joinLobby;
     window.addEventListener("load", displayLobbies);
   </script>
