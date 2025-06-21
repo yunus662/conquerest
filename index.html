@@ -85,6 +85,7 @@
       background: var(--accent-dark);
       color: #111;
     }
+    
     /* Pages Container */
     #pages {
       padding: 20px 30px;
@@ -92,7 +93,7 @@
     .page { display: none; }
     .page.active { display: block; }
     
-    /* Home (Lobby) Page */
+    /* Home Page (welcome message) */
     #page-home {
       text-align: center;
       padding: 40px;
@@ -101,10 +102,51 @@
       border-radius: 6px;
       margin-bottom: 20px;
     }
-    /* Standard page styling for Forum, About, Contacts, Creator */
-    .page h2 {
-      margin-bottom: 15px;
+    
+    /* Lobbies Page */
+    #page-lobbies {
+      padding: 20px;
     }
+    /* Container for lobby cards */
+    #lobbyList {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .lobby-card {
+      background: #1d1d1f;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .lobby-card h3 {
+      margin-top: 0;
+      font-size: 1.5em;
+    }
+    .lobby-card p {
+      margin: 6px 0;
+      color: #ccc;
+    }
+    .lobby-card button {
+      margin-top: 15px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.25s;
+    }
+    .lobby-card button:hover {
+      background: var(--accent-dark);
+    }
+    
+    /* Standard styling for Forum, About, Contacts, Creator pages */
+    .page h2 { margin-bottom: 15px; }
     
     /* Admin Console Page */
     #page-admin {
@@ -130,7 +172,7 @@
       display: none;
     }
     
-    /* Shutdown Overlay (for admin) */
+    /* Shutdown Overlay */
     #shutdownOverlay {
       display: none;
       position: fixed;
@@ -149,6 +191,7 @@
   <nav id="navbar">
     <ul id="navLeft">
       <li onclick="showPage('home')">Home</li>
+      <li onclick="showPage('lobbies')">Lobbies</li>
       <li onclick="showPage('forum')">Forum</li>
       <li onclick="showPage('about')">About</li>
       <li onclick="showPage('contacts')">Contacts</li>
@@ -160,7 +203,7 @@
     </div>
   </nav>
   
-  <!-- Profile Card Display (appears after login) -->
+  <!-- Profile Card (appears after login) -->
   <div id="profileDisplay"></div>
   
   <!-- Pages Container -->
@@ -168,7 +211,14 @@
     <!-- Home Page -->
     <div id="page-home" class="page active">
       <h2>Welcome to Conquerest</h2>
-      <p id="statusMessage"></p>
+      <p id="statusMessage">Please log in to access the full features.</p>
+    </div>
+    <!-- Lobbies Page -->
+    <div id="page-lobbies" class="page">
+      <h2>Active Lobbies</h2>
+      <div id="lobbyList">
+        <p id="lobbyStatus" style="color: #999; text-align: center;">Loading lobbies...</p>
+      </div>
     </div>
     <!-- Forum Page -->
     <div id="page-forum" class="page">
@@ -188,17 +238,17 @@
     <!-- Creator Page -->
     <div id="page-creator" class="page">
       <h2>Creator</h2>
-      <p>Developed by a visionary team committed to redefining strategy gaming.</p>
+      <p>Developed by a visionary team dedicated to redefining strategy gaming.</p>
     </div>
-    <!-- Admin Console Page (visible only to admin users) -->
+    <!-- Admin Console Page (only for admins) -->
     <div id="page-admin" class="page">
       <h2>Admin Console</h2>
       <button onclick="shutdownGame()">Shutdown Game</button>
       <button onclick="listRepoFiles()">List Repository Files</button>
       <div id="repoFiles"></div>
       <h3>Assign Role</h3>
-      <input type="email" id="role-email" placeholder="User Email" style="padding:8px;"/>
-      <select id="role-select" style="padding:8px; margin-left:5px;">
+      <input type="email" id="roleEmail" placeholder="User Email" style="padding:8px;"/>
+      <select id="roleSelect" style="padding:8px; margin-left:5px;">
         <option value="moderator">Moderator</option>
         <option value="user">User</option>
         <option value="admin">Admin</option>
@@ -207,7 +257,7 @@
     </div>
   </div>
   
-  <!-- Shutdown Overlay -->
+  <!-- Shutdown Overlay (for admin command) -->
   <div id="shutdownOverlay">
     <h1>Game Shutdown</h1>
     <p>The game is currently shut down for maintenance.</p>
@@ -218,8 +268,9 @@
   <!-- Firebase & Custom Scripts -->
   <script type="module">
     import { loginWithGoogle, renderPlayerStats } from "./player-system.js";
+    import { fetchLobbies, joinLobby } from "./lobbies.js";
     
-    // Global variables
+    // Global variables for current user and its role
     window.currentUser = null;
     window.userRole = "guest"; // guest, user, moderator, admin
     
@@ -229,7 +280,8 @@
         window.currentUser = user;
         document.getElementById("loginButton").style.display = "none";
         renderProfileCard(user);
-        // Determine user role (admin emails get admin privileges)
+        
+        // Admin accounts get admin privileges
         const adminEmails = ["imyaay234@gmail.com", "woowarey@gmail.com"];
         if (adminEmails.includes(user.email)) {
           window.userRole = "admin";
@@ -238,10 +290,9 @@
         } else {
           window.userRole = "user";
           document.getElementById("statusMessage").textContent = "Game is undergoing updates. Please check back later.";
-          document.getElementById("updateNotice").style.display = "block";
         }
-        // Optionally, update player stats in profile card
-        renderPlayerStats("dummyElement"); // For additional UI updates if needed
+        // Optionally, update other UI parts with player stats:
+        renderPlayerStats("profileDisplay"); // You can integrate stats into the profile card if desired
       } catch (err) {
         console.error("Login failed:", err);
       }
@@ -261,7 +312,7 @@
     }
     
     window.logout = async function() {
-      // Assuming signOut is implemented in player-system.js
+      // Call Firebase signOut if implemented in player-system.js
       window.currentUser = null;
       window.userRole = "guest";
       document.getElementById("loginButton").style.display = "inline-block";
@@ -274,39 +325,71 @@
     
     function hideAllPages() {
       const pages = document.getElementsByClassName("page");
-      for (let p of pages) {
-        p.classList.remove("active");
-      }
+      for (let p of pages) { p.classList.remove("active"); }
     }
     
     window.showPage = function(page) {
       hideAllPages();
       document.getElementById("page-" + page).classList.add("active");
+      // If the lobbies page is shown, fetch and display lobby cards:
+      if (page === "lobbies") { displayLobbies(); }
     };
+    
+    // Lobbies: Fetch and display cards using lobbies.js
+    async function displayLobbies() {
+      const container = document.getElementById("lobbyList");
+      const statusEl = document.getElementById("lobbyStatus");
+      container.innerHTML = "";
+      try {
+        const lobbies = await fetchLobbies();
+        if (!lobbies.length) {
+          statusEl.textContent = "No active lobbies.";
+          return;
+        }
+        lobbies.forEach(lobby => {
+          const card = document.createElement("div");
+          card.className = "lobby-card";
+          card.innerHTML = `
+            <h3>${lobby.lobbyName}</h3>
+            <p><strong>Start:</strong> ${lobby.startTime}</p>
+            <p><strong>Year:</strong> ${lobby.inGameYear}</p>
+            <p><strong>Players:</strong> ${lobby.playersCount}</p>
+            <button onclick="window.joinLobby('${lobby.id}')">Join Lobby</button>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        statusEl.textContent = "Failed to load lobbies.";
+        console.error("Error in displayLobbies:", err);
+      }
+    }
+    
+    window.joinLobby = joinLobby;
     
     // Admin Console functions
     window.shutdownGame = function() {
-      // Fetch real repository file list from GitHub and show shutdown overlay
-      listRepoFiles(true);
+      // When shutdown, hide pages and show overlay
       document.getElementById("shutdownOverlay").style.display = "block";
       document.getElementById("pages").style.display = "none";
+      listRepoFiles(true);
     };
     
     window.restartGame = function() {
+      // Remove shutdown overlay and bring back main pages, including lobbies
       document.getElementById("shutdownOverlay").style.display = "none";
       document.getElementById("pages").style.display = "block";
     };
     
     window.assignRole = function() {
-      const email = document.getElementById("role-email").value;
-      const role = document.getElementById("role-select").value;
+      const email = document.getElementById("roleEmail").value;
+      const role = document.getElementById("roleSelect").value;
       alert(`Role '${role}' assigned to ${email}.`);
-      // Here, update the user's role in your backend (not implemented)
+      // Update user role in your backend here (not implemented)
     };
     
-    // Fetch repository contents from GitHub API to list real files
+    // Fetch real repository file list from GitHub API
     window.listRepoFiles = async function(isOverlay = false) {
-      const repoUrl = "https://github.com/yunus662/Conqueror-games/tree/revised";
+      const repoUrl = "https://api.github.com/repos/yunus662/conquerest/contents/";
       try {
         const response = await fetch(repoUrl);
         if (!response.ok) throw new Error("Failed to fetch repository contents");
@@ -329,7 +412,7 @@
       }
     }
     
-    // Show home page by default on load
+    // Show Home page by default on load
     window.addEventListener("load", function() {
       showPage("home");
     });
