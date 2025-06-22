@@ -69,10 +69,7 @@
       border-radius: 50%;
       object-fit: cover;
     }
-    #profileDisplay div {
-      display: flex;
-      flex-direction: column;
-    }
+    #profileDisplay div { display: flex; flex-direction: column; }
     #profileDisplay button {
       background: var(--accent);
       border: none;
@@ -81,15 +78,10 @@
       cursor: pointer;
       transition: background 0.25s;
     }
-    #profileDisplay button:hover {
-      background: var(--accent-dark);
-      color: #111;
-    }
+    #profileDisplay button:hover { background: var(--accent-dark); color: #111; }
     
     /* Pages Container */
-    #pages {
-      padding: 20px 30px;
-    }
+    #pages { padding: 20px 30px; }
     .page { display: none; }
     .page.active { display: block; }
     
@@ -123,14 +115,8 @@
       flex-direction: column;
       justify-content: space-between;
     }
-    .lobby-card h3 {
-      margin-top: 0;
-      font-size: 1.5em;
-    }
-    .lobby-card p {
-      margin: 6px 0;
-      color: #ccc;
-    }
+    .lobby-card h3 { margin-top: 0; font-size: 1.5em; }
+    .lobby-card p { margin: 6px 0; color: #ccc; }
     .lobby-card button {
       margin-top: 15px;
       background: var(--accent);
@@ -141,9 +127,7 @@
       cursor: pointer;
       transition: background 0.25s;
     }
-    .lobby-card button:hover {
-      background: var(--accent-dark);
-    }
+    .lobby-card button:hover { background: var(--accent-dark); }
     
     /* Standard styling for Forum, About, Contacts, Creator pages */
     .page h2 { margin-bottom: 15px; }
@@ -155,9 +139,7 @@
       border: 1px solid var(--border-color);
       border-radius: 6px;
     }
-    #repoFiles {
-      margin-top: 15px;
-    }
+    #repoFiles { margin-top: 15px; }
     #repoFiles ul { list-style: none; padding-left: 0; }
     #repoFiles li { padding: 5px 0; }
     
@@ -211,7 +193,7 @@
     <!-- Home Page -->
     <div id="page-home" class="page active">
       <h2>Welcome to Conquerest</h2>
-      <p id="statusMessage">Please log in to access the full features.</p>
+      <p id="statusMessage">Please log in to access full features.</p>
     </div>
     <!-- Lobbies Page -->
     <div id="page-lobbies" class="page">
@@ -233,12 +215,12 @@
     <!-- Contacts Page -->
     <div id="page-contacts" class="page">
       <h2>Contacts</h2>
-      <p>Contact us at woowarey@gmail.com(temporary email) for assistance and inquiries.</p>
+      <p>For assistance, email support@conquerest.com.</p>
     </div>
     <!-- Creator Page -->
     <div id="page-creator" class="page">
       <h2>Creator</h2>
-      <p>Developed by a visionary team dedicated to redefining strategy gaming.</p>
+      <p>Developed by visionaries committed to redefining strategy gaming.</p>
     </div>
     <!-- Admin Console Page (only for admins) -->
     <div id="page-admin" class="page">
@@ -257,7 +239,7 @@
     </div>
   </div>
   
-  <!-- Shutdown Overlay (for admin command) -->
+  <!-- Shutdown Overlay -->
   <div id="shutdownOverlay">
     <h1>Game Shutdown</h1>
     <p>The game is currently shut down for maintenance.</p>
@@ -270,9 +252,9 @@
     import { loginWithGoogle, renderPlayerStats } from "./player-system.js";
     import { fetchLobbies, joinLobby } from "./lobbies.js";
     
-    // Global variables for current user and its role
+    // Global variables for current user and role
     window.currentUser = null;
-    window.userRole = "guest"; // guest, user, moderator, admin
+    window.userRole = "guest"; // values: guest, user, moderator, admin
     
     window.login = async function() {
       try {
@@ -281,18 +263,19 @@
         document.getElementById("loginButton").style.display = "none";
         renderProfileCard(user);
         
-        // Admin accounts get admin privileges
+        // Grant admin privileges for these emails:
         const adminEmails = ["imyaay234@gmail.com", "woowarey@gmail.com"];
         if (adminEmails.includes(user.email)) {
           window.userRole = "admin";
           document.getElementById("adminTab").style.display = "inline-block";
-          document.getElementById("statusMessage").textContent = "Welcome admin user..";
+          document.getElementById("statusMessage").textContent = "Admin access granted. Unlimited tickets assigned.";
         } else {
           window.userRole = "user";
           document.getElementById("statusMessage").textContent = "Game is undergoing updates. Please check back later.";
         }
-        // Optionally, update other UI parts with player stats:
-        renderPlayerStats("profileDisplay"); // You can integrate stats into the profile card if desired
+        
+        // Optionally update player stats in the profile card
+        renderPlayerStats("profileDisplay");
       } catch (err) {
         console.error("Login failed:", err);
       }
@@ -312,7 +295,7 @@
     }
     
     window.logout = async function() {
-      // Call Firebase signOut if implemented in player-system.js
+      // Assuming signOut is implemented in player-system.js
       window.currentUser = null;
       window.userRole = "guest";
       document.getElementById("loginButton").style.display = "inline-block";
@@ -331,11 +314,10 @@
     window.showPage = function(page) {
       hideAllPages();
       document.getElementById("page-" + page).classList.add("active");
-      // If the lobbies page is shown, fetch and display lobby cards:
       if (page === "lobbies") { displayLobbies(); }
     };
     
-    // Lobbies: Fetch and display cards using lobbies.js
+    // Lobbies: Fetch and display lobby cards from Firestore via lobbies.js
     async function displayLobbies() {
       const container = document.getElementById("lobbyList");
       const statusEl = document.getElementById("lobbyStatus");
@@ -368,14 +350,12 @@
     
     // Admin Console functions
     window.shutdownGame = function() {
-      // When shutdown, hide pages and show overlay
       document.getElementById("shutdownOverlay").style.display = "block";
       document.getElementById("pages").style.display = "none";
       listRepoFiles(true);
     };
     
     window.restartGame = function() {
-      // Remove shutdown overlay and bring back main pages, including lobbies
       document.getElementById("shutdownOverlay").style.display = "none";
       document.getElementById("pages").style.display = "block";
     };
@@ -384,16 +364,22 @@
       const email = document.getElementById("roleEmail").value;
       const role = document.getElementById("roleSelect").value;
       alert(`Role '${role}' assigned to ${email}.`);
-      // Update user role in your backend here (not implemented)
+      // Implement backend role update here
     };
     
-    // Fetch real repository file list from GitHub API
+    // Fetch repository file listing via AllOrigins proxy to bypass CORS
     window.listRepoFiles = async function(isOverlay = false) {
+      // Target GitHub API for conqueror-games repository
       const repoUrl = "https://github.com/yunus662/Conqueror-games/tree/revised";
+      // AllOrigins proxy URL (disable cache for development)
+      const proxyUrl = "https://api.allorigins.hexocode.repl.co/get?disableCache=true&url=";
+      const fullUrl = proxyUrl + encodeURIComponent(repoUrl);
       try {
-        const response = await fetch(repoUrl);
+        const response = await fetch(fullUrl);
         if (!response.ok) throw new Error("Failed to fetch repository contents");
-        const files = await response.json();
+        const data = await response.json();
+        // AllOrigins wraps the result inside a 'contents' property
+        const files = JSON.parse(data.contents);
         displayRepoFiles(files, isOverlay);
       } catch (err) {
         console.error("Error fetching repo files:", err);
