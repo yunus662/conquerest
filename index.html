@@ -244,15 +244,17 @@
     <h1>Game Shutdown</h1>
     <p>The game is currently shut down for maintenance.</p>
     <div id="repoFilesOverlay"></div>
-    <button onclick="restartGame()" style="padding: 10px 20px; margin-top:20px; background: var(--accent); border: none; color: #fff; border-radius: 4px; cursor: pointer;">Restart Game</button>
+    <button onclick="restartGame()" 
+            style="padding: 10px 20px; margin-top:20px; background: var(--accent); border: none; color: #fff; border-radius: 4px; cursor: pointer;">
+      Restart Game
+    </button>
   </div>
   
   <!-- Firebase & Custom Scripts -->
   <script type="module">
     import { loginWithGoogle, renderPlayerStats } from "./player-system.js";
-    import { fetchLobbies, joinLobby } from "./lobbies.js";
-    
-    // Global variables for current user and role
+    // We no longer use Firestore for lobbies—instead, load from conqueror-games repo
+    // via the AllOrigins proxy.
     window.currentUser = null;
     window.userRole = "guest"; // values: guest, user, moderator, admin
     
@@ -295,7 +297,7 @@
     }
     
     window.logout = async function() {
-      // Assuming signOut is implemented in player-system.js
+      // Assume Firebase signOut is implemented in player-system.js
       window.currentUser = null;
       window.userRole = "guest";
       document.getElementById("loginButton").style.display = "inline-block";
@@ -317,13 +319,30 @@
       if (page === "lobbies") { displayLobbies(); }
     };
     
-    // Lobbies: Fetch and display lobby cards from Firestore via lobbies.js
+    // Lobbies: Fetch lobby data from the conqueror-games repository
+    async function fetchLobbyData() {
+      // Assume your repository has a file "lobbies.json" at its root
+      const repoUrl = "https://github.com/yunus662/Conqueror-games/blob/revised/lobbies.json";
+      const proxyUrl = "https://api.allorigins.hexocode.repl.co/get?disableCache=true&url=";
+      const fullUrl = proxyUrl + encodeURIComponent(repoUrl);
+      try {
+        const response = await fetch(fullUrl);
+        if (!response.ok) throw new Error("Failed to fetch lobby data");
+        const data = await response.json();
+        const lobbyData = JSON.parse(data.contents);
+        return lobbyData;
+      } catch (err) {
+        console.error("Error in fetchLobbyData:", err);
+        return [];
+      }
+    }
+    
     async function displayLobbies() {
       const container = document.getElementById("lobbyList");
       const statusEl = document.getElementById("lobbyStatus");
       container.innerHTML = "";
       try {
-        const lobbies = await fetchLobbies();
+        const lobbies = await fetchLobbyData();
         if (!lobbies.length) {
           statusEl.textContent = "No active lobbies.";
           return;
@@ -333,7 +352,7 @@
           card.className = "lobby-card";
           card.innerHTML = `
             <h3>${lobby.lobbyName}</h3>
-            <p><strong>Start:</strong> ${lobby.startTime}</p>
+            <p><strong>Start:</strong> ${new Date(lobby.startTime).toLocaleString()}</p>
             <p><strong>Year:</strong> ${lobby.inGameYear}</p>
             <p><strong>Players:</strong> ${lobby.playersCount}</p>
             <button onclick="window.joinLobby('${lobby.id}')">Join Lobby</button>
@@ -346,7 +365,10 @@
       }
     }
     
-    window.joinLobby = joinLobby;
+    // Define joinLobby to navigate to game.html
+    window.joinLobby = function(lobbyId) {
+      window.location.href = "game.html?lobby=" + encodeURIComponent(lobbyId);
+    };
     
     // Admin Console functions
     window.shutdownGame = function() {
@@ -367,18 +389,15 @@
       // Implement backend role update here
     };
     
-    // Fetch repository file listing via AllOrigins proxy to bypass CORS
+    // Fetch repository file listing via AllOrigins proxy (for admin console)
     window.listRepoFiles = async function(isOverlay = false) {
-      // Target GitHub API for conqueror-games repository
-      const repoUrl = "https://github.com/yunus662/Conqueror-games/tree/revised";
-      // AllOrigins proxy URL (disable cache for development)
+      const repoUrl = "https:"https://github.com/yunus662/Conqueror-games/tree/revised";
       const proxyUrl = "https://api.allorigins.hexocode.repl.co/get?disableCache=true&url=";
       const fullUrl = proxyUrl + encodeURIComponent(repoUrl);
       try {
         const response = await fetch(fullUrl);
         if (!response.ok) throw new Error("Failed to fetch repository contents");
         const data = await response.json();
-        // AllOrigins wraps the result inside a 'contents' property
         const files = JSON.parse(data.contents);
         displayRepoFiles(files, isOverlay);
       } catch (err) {
