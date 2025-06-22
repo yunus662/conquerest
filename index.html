@@ -9,83 +9,78 @@
     :root {
       --bg-dark: #141416;
       --bg-medium: #1f1f22;
-      --bg-light: #232323;
       --text-light: #f0f0f0;
       --accent: #e74c3c;
       --accent-dark: #c0392b;
       --primary-font: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
-    /* Reset */
+    /* Global Reset & Base Styles */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: var(--primary-font);
       background: var(--bg-dark);
       color: var(--text-light);
-      overflow-x: hidden;
     }
     a { text-decoration: none; color: inherit; }
     
     /* Navigation Bar */
     nav {
       background: var(--bg-medium);
+      padding: 10px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 2rem;
-      border-bottom: 1px solid var(--accent);
+      border-bottom: 2px solid var(--accent);
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 1000;
     }
     nav ul {
-      display: flex;
       list-style: none;
-      gap: 1.5rem;
-    }
-    nav li {
-      cursor: pointer;
-      transition: color 0.3s ease;
-    }
-    nav li:hover {
-      color: var(--accent);
-    }
-    nav .right {
       display: flex;
-      gap: 1rem;
+      gap: 20px;
       align-items: center;
     }
+    nav li { font-size: 1rem; }
+    nav li a { color: var(--text-light); }
+    nav li a:hover { color: var(--accent); }
+    nav .right { display: flex; align-items: center; }
+    /* The owner panel link (and admin console) is revealed based on role */
+    #adminTab, #ownerTab { display: none; }
     
-    /* Hero Section */
+    /* Hero Section with Full-screen Background */
     header.hero {
-      background: url('https://source.unsplash.com/1920x1080/?war,military') center center/cover no-repeat;
-      height: 100vh;
       position: relative;
+      height: 100vh;
+      background: url('https://source.unsplash.com/1920x1080/?war,military') center center/cover no-repeat;
     }
     header.hero::after {
       content: "";
-      background: rgba(0, 0, 0, 0.65);
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 1;
     }
-    header.hero .hero-content {
+    .hero-content {
       position: relative;
       z-index: 2;
       text-align: center;
       top: 40%;
       transform: translateY(-40%);
+      padding: 0 20px;
     }
-    header.hero h1 {
+    .hero-content h1 {
       font-size: 3.5rem;
-      margin-bottom: 1rem;
       text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+      margin-bottom: 1rem;
     }
-    header.hero p {
+    .hero-content p {
       font-size: 1.25rem;
-      margin-bottom: 2rem;
       text-shadow: 1px 1px 6px rgba(0,0,0,0.7);
+      margin-bottom: 2rem;
     }
-    /* Button Styling */
+    
+    /* Button Styles */
     .btn {
       padding: 0.75rem 1.5rem;
       border: none;
@@ -96,395 +91,235 @@
       box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     }
     .btn:hover { transform: scale(1.03); }
-    /* Professional Google Sign In */
+    /* Professional "Sign in with Google" Button */
     .btn-google {
-      background: linear-gradient(45deg, #ffffff, #e8e8e8);
+      background: linear-gradient(45deg, #fff, #e8e8e8);
       color: #444;
       border: 2px solid #ddd;
     }
     .btn-google:hover { background: #f1f1f1; }
-    /* Payment Button */
-    .btn-payment {
+    /* "Start New Game" Button */
+    .btn-game {
       background: var(--accent);
       color: #fff;
     }
-    .btn-payment:hover { background: var(--accent-dark); }
     
-    /* Profile Card */
+    /* Profile Card with War Image Behind It */
     #profileCard {
       display: none;
-      background: var(--bg-light);
-      padding: 1rem;
-      border-radius: 6px;
-      margin: 1rem 2rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      gap: 1rem;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      color: #fff;
+      background: url('https://source.unsplash.com/600x400/?war,battle') center center/cover no-repeat;
+      position: relative;
+      z-index: 2;
+    }
+    #profileCard::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 8px;
+      z-index: -1;
     }
     #profileCard img {
-      width: 60px;
-      height: 60px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
-      object-fit: cover;
+      border: 2px solid var(--accent);
+      margin-bottom: 10px;
     }
-    #profileCard .info {
-      flex-grow: 1;
-    }
+    #profileCard h3 { margin: 10px 0 5px; }
+    #profileCard p { margin: 0; }
     #profileCard button {
+      margin-top: 10px;
       background: var(--accent);
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
       color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      border: none;
       cursor: pointer;
     }
-    
-    /* Pages Container */
-    .pages {
-      padding: 2rem;
-    }
-    .page { display: none; }
-    .page.active { display: block; }
-    .card {
-      background: var(--bg-medium);
-      padding: 1.5rem;
-      border: 1px solid var(--accent);
-      border-radius: 6px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-      margin: 1rem 0;
-    }
-    
-    /* Lobby Card Styling */
-    .lobby-card {
-      background: var(--bg-medium);
+    /* Pricing Control Panel (visible only to Owner) */
+    #pricingControl {
+      margin-top: 15px;
+      background: rgba(0, 0, 0, 0.5);
       padding: 1rem;
-      border: 1px solid var(--accent);
-      border-radius: 6px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-      margin: 1rem 0;
+      border-radius: 5px;
     }
-    .lobby-card h3 { margin-bottom: 0.5rem; }
-    .lobby-card p { margin-bottom: 0.5rem; }
+    #pricingControl label { margin-right: 0.5rem; }
+    #pricingControl input { width: 80px; padding: 0.25rem; }
     
-    /* Payment Center Page */
-    #page-payment .payment-card {
-      max-width: 400px;
-      margin: 2rem auto;
+    /* Main Content (if needed) */
+    .main-content {
+      max-width: 800px;
+      margin: 40px auto;
       text-align: center;
-      padding: 2rem;
-      border: 1px solid var(--accent);
-      border-radius: 6px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-    }
-    #page-payment input, 
-    #page-payment button {
-      width: 100%;
-      padding: 0.75rem;
-      margin: 0.5rem 0;
-      border: none;
-      border-radius: 4px;
-      font-size: 1rem;
-    }
-    #page-payment input {
-      background: var(--bg-light);
-      color: var(--text-light);
+      padding: 0 20px;
     }
     
     /* Footer */
     footer {
       text-align: center;
       padding: 1rem;
-      border-top: 1px solid var(--accent);
+      border-top: 2px solid var(--accent);
       margin-top: 2rem;
-    }
-    
-    /* Admin Console Page (similar styling as others) */
-    #page-admin { background: var(--bg-medium); padding: 2rem; border-radius: 6px; }
-    
-    /* Shutdown Overlay */
-    #shutdownOverlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: var(--bg-dark);
-      z-index: 1000;
-      color: var(--accent);
-      text-align: center;
-      padding-top: 15%;
     }
   </style>
 </head>
 <body>
-  <!-- Navigation Bar -->
+  <!-- Navigation Bar with real links to separate HTML files -->
   <nav>
     <ul>
-      <li onclick="showPage('home')">Home</li>
-      <li onclick="showPage('lobbies')">Lobbies</li>
-      <li onclick="showPage('forum')">Forum</li>
-      <li onclick="showPage('about')">About</li>
-      <li onclick="showPage('contacts')">Contacts</li>
-      <li onclick="showPage('creator')">Creator</li>
-      <li onclick="showPage('payment')">Payment</li>
-      <li id="adminTab" style="display:none;" onclick="showPage('admin')">Admin Console</li>
+      <li><a href="home.html">Home</a></li>
+      <li><a href="lobbies.html">Lobbies</a></li>
+      <li><a href="forum.html">Forum</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contacts.html">Contacts</a></li>
+      <li><a href="creator.html">Creator</a></li>
+      <li><a href="payment.html">Payment</a></li>
+      <li id="adminTab"><a href="admin.html">Admin Console</a></li>
+      <li id="ownerTab"><a href="owner.html">Owner Panel</a></li>
     </ul>
     <div class="right">
-      <button id="loginBtn" class="btn btn-google" onclick="login()">Sign in with Google</button>
+      <button id="loginButton" class="btn btn-google" onclick="login()">Sign in with Google</button>
     </div>
   </nav>
   
-  <!-- Profile Card (appears after login) -->
-  <div id="profileCard">
-    <img src="" alt="Profile Picture">
-    <div class="info">
-      <h3 id="profileName"></h3>
-      <p id="profileEmail"></p>
+  <!-- Hero Section with full-screen background -->
+  <header class="hero">
+    <div class="hero-content">
+      <h1>Conquerest</h1>
+      <p>Command Your Empire. Lead Your Forces into Battle.</p>
+      <!-- "Start New Game" button launches game files from the external repository -->
+      <button id="startGameButton" class="btn btn-game" onclick="startNewGame()">Start New Game</button>
     </div>
-    <button onclick="logout()">Logout</button>
+  </header>
+  
+  <!-- Main Content (Fallback welcome message) -->
+  <div class="main-content">
+    <h2>Welcome to Conquerest</h2>
+    <p>Your journey to strategic supremacy begins here.</p>
   </div>
   
-  <!-- Pages Container -->
-  <div class="pages">
-    <!-- Home Page with Hero -->
-    <div id="page-home" class="page active">
-      <header class="hero">
-        <div class="hero-content">
-          <h1>Conquerest</h1>
-          <p>Command Your Empire. Lead Your Forces into Battle.</p>
-          <button class="btn btn-google" onclick="login()">Sign in with Google</button>
-        </div>
-      </header>
-    </div>
-    
-    <!-- Lobbies Page -->
-    <div id="page-lobbies" class="page">
-      <h2>Active Lobbies</h2>
-      <div id="lobbyContainer">
-        <!-- Lobby cards will be spawned here dynamically -->
-      </div>
-    </div>
-    
-    <!-- Forum Page -->
-    <div id="page-forum" class="page">
-      <h2>Forum</h2>
-      <p>Engage with fellow commanders and discuss strategies.</p>
-    </div>
-    
-    <!-- About Page -->
-    <div id="page-about" class="page">
-      <h2>About</h2>
-      <p>Conquerest is a global strategy game where every decision shapes your destiny.</p>
-    </div>
-    
-    <!-- Contacts Page -->
-    <div id="page-contacts" class="page">
-      <h2>Contacts</h2>
-      <p>For support, email support@conquerest.com.</p>
-    </div>
-    
-    <!-- Creator Page -->
-    <div id="page-creator" class="page">
-      <h2>Creator</h2>
-      <p>Developed by a visionary team dedicated to redefining strategy gaming.</p>
-    </div>
-    
-    <!-- Payment Center Page -->
-    <div id="page-payment" class="page">
-      <h2>Payment Center</h2>
-      <div class="payment-card card">
-        <h3>Purchase Game Credits</h3>
-        <p>Buy tickets to boost your empire.</p>
-        <input id="paymentAmount" type="number" placeholder="Enter amount" min="1">
-        <button class="btn btn-payment" onclick="makePayment()">Buy Tickets</button>
-      </div>
-    </div>
-    
-    <!-- Admin Console Page -->
-    <div id="page-admin" class="page">
-      <h2>Admin Console</h2>
-      <button onclick="shutdownGame()">Shutdown Game</button>
-      <button onclick="listRepoFiles()">List Repository Files</button>
-      <div id="repoFiles"></div>
-      <h3>Assign Role</h3>
-      <input type="email" id="roleEmail" placeholder="User Email" style="padding:8px;"/>
-      <select id="roleSelect" style="padding:8px; margin-left:5px;">
-        <option value="moderator">Moderator</option>
-        <option value="user">User</option>
-        <option value="admin">Admin</option>
-      </select>
-      <button onclick="assignRole()">Assign</button>
-    </div>
-  </div>
+  <!-- Profile Card (populated upon sign-in) -->
+  <div id="profileCard"></div>
   
   <!-- Footer -->
   <footer>
     &copy; 2025 Conquerest. All Rights Reserved.
   </footer>
   
-  <!-- Shutdown Overlay -->
-  <div id="shutdownOverlay">
-    <h1>Game Shutdown</h1>
-    <p>The game is currently shut down for maintenance.</p>
-    <div id="repoFilesOverlay"></div>
-    <button class="btn btn-payment" onclick="restartGame()">Restart Game</button>
-  </div>
-  
-  <!-- Scripts -->
+  <!-- JavaScript Section -->
   <script type="module">
     import { loginWithGoogle, logout as fbLogout, renderPlayerStats } from "./player-system.js";
-    // Import reward center or payment functionality as needed
     
-    // Global variables for user and current role
+    // Global variables
     window.currentUser = null;
-    window.userRole = "guest"; // possible values: guest, user, moderator, admin
+    // Roles: guest, user, moderator, admin, owner
+    window.userRole = "guest";
     
     window.login = async function() {
       try {
         const user = await loginWithGoogle();
         window.currentUser = user;
-        document.getElementById("loginBtn").style.display = "none";
-        displayProfile(user);
-        // Grant admin privileges for these emails:
-        const adminEmails = ["imyaay234@gmail.com", "woowarey@gmail.com"];
-        if (adminEmails.includes(user.email)) {
-          window.userRole = "admin";
-          document.getElementById("adminTab").style.display = "inline";
+        
+        // Hide sign-in buttons (both navbar and hero) on successful login
+        document.getElementById("loginButton").style.display = "none";
+        
+        // Role assignment: The owner role is unchangeable for imyaay234@gmail.com
+        if (user.email === "imyaay234@gmail.com") {
+          window.userRole = "owner";
+          document.getElementById("ownerTab").style.display = "list-item";
         } else {
-          window.userRole = "user";
+          // Check for other admin accounts
+          const adminEmails = ["woowarey@gmail.com"];
+          if (adminEmails.includes(user.email)) {
+            window.userRole = "admin";
+            document.getElementById("adminTab").style.display = "list-item";
+          } else {
+            window.userRole = "user";
+          }
         }
-        // Optionally update player stats into the profile card
+        
         renderPlayerStats("profileCard");
+        displayProfileCard(user);
       } catch (err) {
         console.error("Login failed:", err);
       }
     };
     
-    function displayProfile(user) {
-      const profile = document.getElementById("profileCard");
-      profile.innerHTML = `
+    function displayProfileCard(user) {
+      const card = document.getElementById("profileCard");
+      let html = `
         <img src="${user.photoURL}" alt="Profile Picture">
-        <div class="info">
-          <h3 id="profileName">${user.displayName}</h3>
-          <p id="profileEmail">${user.email}</p>
-        </div>
-        <button onclick="logout()">Logout</button>
+        <h3>${user.displayName}</h3>
+        <p>${user.email}</p>
       `;
-      profile.style.display = "flex";
+      // If the user is the Owner, display additional pricing controls
+      if (window.userRole === "owner") {
+        html += `
+          <div id="pricingControl">
+            <h4>Ticket Pricing Control</h4>
+            <label for="ticketPrice">Ticket Price ($):</label>
+            <input type="number" id="ticketPrice" value="10" min="1">
+            <button onclick="updateTicketPrice()">Update Price</button>
+          </div>
+        `;
+      }
+      html += `<button onclick="logout()">Logout</button>`;
+      card.innerHTML = html;
+      card.style.display = "block";
     }
     
     window.logout = async function() {
-      await fbLogout(); // Firebase signOut
+      await fbLogout();
       window.currentUser = null;
       window.userRole = "guest";
-      document.getElementById("loginBtn").style.display = "inline-block";
+      document.getElementById("loginButton").style.display = "inline-block";
       document.getElementById("profileCard").style.display = "none";
       document.getElementById("adminTab").style.display = "none";
-      showPage("home");
+      document.getElementById("ownerTab").style.display = "none";
     };
     
-    function showPage(page) {
-      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-      document.getElementById("page-" + page).classList.add("active");
-      if (page === "lobbies") { loadLobbies(); }
-    }
-    
-    async function loadLobbies() {
-      const container = document.getElementById("lobbyContainer");
-      container.innerHTML = "";
-      // Fetch lobby data from conqueror-games repository "lobbies.json" using AllOrigins proxy
-      const repoUrl = "https://github.com/yunus662/Conqueror-games/blob/revised/lobbies.json";
-      const proxyUrl = "https://api.allorigins.hexocode.repl.co/get?disableCache=true&url=";
-      try {
-        const response = await fetch(proxyUrl + encodeURIComponent(repoUrl));
-        if (!response.ok) throw new Error("Failed to fetch lobby data");
-        const data = await response.json();
-        const lobbies = JSON.parse(data.contents);
-        if (!lobbies.length) {
-          container.innerHTML = "<p style='text-align:center;'>No active lobbies available.</p>";
-          return;
-        }
-        lobbies.forEach(lobby => {
-          const card = document.createElement("div");
-          card.className = "lobby-card";
-          card.innerHTML = `
-            <h3>${lobby.lobbyName}</h3>
-            <p><strong>Start:</strong> ${new Date(lobby.startTime).toLocaleString()}</p>
-            <p><strong>Year:</strong> ${lobby.inGameYear}</p>
-            <p><strong>Players:</strong> ${lobby.playersCount}</p>
-            <button onclick="joinLobby('${lobby.id}')">Join Lobby</button>
-          `;
-          container.appendChild(card);
-        });
-      } catch (err) {
-        container.innerHTML = "<p style='text-align:center; color:var(--accent);'>Error loading lobbies.</p>";
-        console.error("Error in loadLobbies:", err);
-      }
-    }
-    
-    window.joinLobby = function(lobbyId) {
-      window.location.href = "game.html?lobby=" + encodeURIComponent(lobbyId);
+    window.updateTicketPrice = function() {
+      const price = document.getElementById("ticketPrice").value;
+      // Here, update your backend pricing mechanism. For now, just simulate.
+      alert("Ticket price has been updated to $" + price);
     };
     
-    // Payment System Functionality
-    window.makePayment = function() {
-      const amount = document.getElementById("paymentAmount").value;
-      if (!amount || amount <= 0) {
-        alert("Please enter a valid amount.");
+    /* 
+       startNewGame(): This function demonstrates how index.html dynamically connects 
+       to your conqueror-games repository. When the "Start New Game" button is clicked,
+       it uses dynamic module import to load the game engine file from the external repository.
+       
+       Modify the URL below ("https://yourusername.github.io/conqueror-games/game-engine.js")
+       to point to the actual location where your game engine is hosted (via GitHub Pages or similar).
+    */
+    window.startNewGame = async function() {
+      if (!window.currentUser) {
+        alert("Please sign in to start a game.");
         return;
       }
-      // Replace with actual payment gateway integration (e.g., Stripe)
-      alert("Payment successful! " + amount + " tickets purchased.");
-    };
-    
-    // Admin Console functions
-    window.shutdownGame = function() {
-      document.getElementById("shutdownOverlay").style.display = "block";
-      document.querySelector(".pages").style.display = "none";
-      listRepoFiles(true);
-    };
-    
-    window.restartGame = function() {
-      document.getElementById("shutdownOverlay").style.display = "none";
-      document.querySelector(".pages").style.display = "block";
-    };
-    
-    window.assignRole = function() {
-      const email = document.getElementById("roleEmail").value;
-      const role = document.getElementById("roleSelect").value;
-      alert(`Role '${role}' assigned to ${email}.`);
-      // Backend role assignment logic goes here
-    };
-    
-    window.listRepoFiles = async function(isOverlay = false) {
-      const repoUrl = "https://github.com/yunus662/Conqueror-games/tree/revised";
-      const proxyUrl = "https://api.allorigins.hexocode.repl.co/get?disableCache=true&url=";
+      const gameEngineUrl = "https://github.com/yunus662/Conqueror-games/blob/revised/engine.js"; // Update accordingly
+      
       try {
-        const response = await fetch(proxyUrl + encodeURIComponent(repoUrl));
-        if (!response.ok) throw new Error("Failed to fetch repository contents");
-        const data = await response.json();
-        const files = JSON.parse(data.contents);
-        displayRepoFiles(files, isOverlay);
+        const gameModule = await import(gameEngineUrl);
+        // Assume the game engine has a method startGame() that takes the current user data.
+        gameModule.startGame({
+          user: window.currentUser,
+          role: window.userRole,
+          lobbyId: "newLobby" // Use your own logic to determine the lobby ID.
+        });
       } catch (err) {
-        console.error("Error fetching repo files:", err);
+        console.error("Error starting game:", err);
+        alert("Failed to load game files.");
       }
     };
-    
-    function displayRepoFiles(files, isOverlay) {
-      let html = "<ul>";
-      files.forEach(file => {
-        html += `<li><a href="${file.download_url}" target="_blank">${file.name}</a></li>`;
-      });
-      html += "</ul>";
-      document.getElementById("repoFiles").innerHTML = html;
-      if (isOverlay) {
-        document.getElementById("repoFilesOverlay").innerHTML = html;
-      }
-    }
-    
-    window.addEventListener("load", function() {
-      showPage("home");
-    });
   </script>
 </body>
 </html>
