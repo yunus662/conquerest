@@ -14,15 +14,23 @@
       --accent-dark: #c0392b;
       --primary-font: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
+    
     /* Global Reset & Base Styles */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
     body {
       font-family: var(--primary-font);
       background: var(--bg-dark);
       color: var(--text-light);
     }
-    a { text-decoration: none; color: inherit; }
-    
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
     /* Navigation Bar */
     nav {
       background: var(--bg-medium);
@@ -41,14 +49,25 @@
       gap: 20px;
       align-items: center;
     }
-    nav li { font-size: 1rem; }
-    nav li a { color: var(--text-light); }
-    nav li a:hover { color: var(--accent); }
-    nav .right { display: flex; align-items: center; }
-    /* The owner panel link (and admin console) is revealed based on role */
-    #adminTab, #ownerTab { display: none; }
-    
-    /* Hero Section with Full-screen Background */
+    nav li {
+      font-size: 1rem;
+    }
+    nav li a {
+      color: var(--text-light);
+    }
+    nav li a:hover {
+      color: var(--accent);
+    }
+    nav .right {
+      display: flex;
+      align-items: center;
+    }
+    /* Admin and Owner Panel links (displayed conditionally) */
+    #adminTab, #ownerTab {
+      display: none;
+    }
+
+    /* Hero Section */
     header.hero {
       position: relative;
       height: 100vh;
@@ -57,7 +76,10 @@
     header.hero::after {
       content: "";
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background: rgba(0, 0, 0, 0.65);
       z-index: 1;
     }
@@ -71,12 +93,12 @@
     }
     .hero-content h1 {
       font-size: 3.5rem;
-      text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
       margin-bottom: 1rem;
     }
     .hero-content p {
       font-size: 1.25rem;
-      text-shadow: 1px 1px 6px rgba(0,0,0,0.7);
+      text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.7);
       margin-bottom: 2rem;
     }
     
@@ -88,23 +110,25 @@
       font-size: 1rem;
       cursor: pointer;
       transition: background 0.3s ease, transform 0.2s ease;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     }
-    .btn:hover { transform: scale(1.03); }
-    /* Professional "Sign in with Google" Button */
+    .btn:hover {
+      transform: scale(1.03);
+    }
     .btn-google {
       background: linear-gradient(45deg, #fff, #e8e8e8);
       color: #444;
       border: 2px solid #ddd;
     }
-    .btn-google:hover { background: #f1f1f1; }
-    /* "Start New Game" Button */
+    .btn-google:hover {
+      background: #f1f1f1;
+    }
     .btn-game {
       background: var(--accent);
       color: #fff;
     }
     
-    /* Profile Card with War Image Behind It */
+    /* Profile Card with War-Themed Background */
     #profileCard {
       display: none;
       max-width: 600px;
@@ -120,8 +144,10 @@
     #profileCard::before {
       content: "";
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       background: rgba(0, 0, 0, 0.6);
       border-radius: 8px;
       z-index: -1;
@@ -133,8 +159,12 @@
       border: 2px solid var(--accent);
       margin-bottom: 10px;
     }
-    #profileCard h3 { margin: 10px 0 5px; }
-    #profileCard p { margin: 0; }
+    #profileCard h3 {
+      margin: 10px 0 5px;
+    }
+    #profileCard p {
+      margin: 0;
+    }
     #profileCard button {
       margin-top: 10px;
       background: var(--accent);
@@ -144,17 +174,22 @@
       border: none;
       cursor: pointer;
     }
-    /* Pricing Control Panel (visible only to Owner) */
+    /* Pricing Control Panel for Owner (displayed in profile card) */
     #pricingControl {
       margin-top: 15px;
       background: rgba(0, 0, 0, 0.5);
       padding: 1rem;
       border-radius: 5px;
     }
-    #pricingControl label { margin-right: 0.5rem; }
-    #pricingControl input { width: 80px; padding: 0.25rem; }
+    #pricingControl label {
+      margin-right: 0.5rem;
+    }
+    #pricingControl input {
+      width: 80px;
+      padding: 0.25rem;
+    }
     
-    /* Main Content (if needed) */
+    /* Main Content */
     .main-content {
       max-width: 800px;
       margin: 40px auto;
@@ -172,7 +207,7 @@
   </style>
 </head>
 <body>
-  <!-- Navigation Bar with real links to separate HTML files -->
+  <!-- Navigation Bar with Anchor Links -->
   <nav>
     <ul>
       <li><a href="home.html">Home</a></li>
@@ -190,23 +225,22 @@
     </div>
   </nav>
   
-  <!-- Hero Section with full-screen background -->
+  <!-- Hero Section -->
   <header class="hero">
     <div class="hero-content">
       <h1>Conquerest</h1>
       <p>Command Your Empire. Lead Your Forces into Battle.</p>
-      <!-- "Start New Game" button launches game files from the external repository -->
       <button id="startGameButton" class="btn btn-game" onclick="startNewGame()">Start New Game</button>
     </div>
   </header>
   
-  <!-- Main Content (Fallback welcome message) -->
+  <!-- Main Content -->
   <div class="main-content">
     <h2>Welcome to Conquerest</h2>
     <p>Your journey to strategic supremacy begins here.</p>
   </div>
   
-  <!-- Profile Card (populated upon sign-in) -->
+  <!-- Profile Card (populated after login) -->
   <div id="profileCard"></div>
   
   <!-- Footer -->
@@ -214,29 +248,33 @@
     &copy; 2025 Conquerest. All Rights Reserved.
   </footer>
   
-  <!-- JavaScript Section -->
+  <!-- JavaScript Section with Module Imports -->
   <script type="module">
-    import { loginWithGoogle, logout as fbLogout, renderPlayerStats } from "./player-system.js";
-    
+    // Import necessary modules
+    import { loginWithGoogle, logout as fbLogout } from "./player-system.js";
+    import { renderPlayerStats } from "./player-stats.js";
+    import { showRewardNotifications } from "./reward-center.js";
+    import { getUserCount } from "./user-tracker.js";
+    import { recordLogin } from "./save-login.js";
+    import { makePayment } from "./payment.js";
+
     // Global variables
     window.currentUser = null;
-    // Roles: guest, user, moderator, admin, owner
+    // Roles: 'guest', 'user', 'moderator', 'admin', 'owner'
     window.userRole = "guest";
     
+    // Login function to handle sign in and role assignment
     window.login = async function() {
       try {
         const user = await loginWithGoogle();
         window.currentUser = user;
-        
-        // Hide sign-in buttons (both navbar and hero) on successful login
-        document.getElementById("loginButton").style.display = "none";
-        
-        // Role assignment: The owner role is unchangeable for imyaay234@gmail.com
+        // Record login in your database
+        recordLogin(user.email);
+        // Determine role
         if (user.email === "imyaay234@gmail.com") {
           window.userRole = "owner";
           document.getElementById("ownerTab").style.display = "list-item";
         } else {
-          // Check for other admin accounts
           const adminEmails = ["woowarey@gmail.com"];
           if (adminEmails.includes(user.email)) {
             window.userRole = "admin";
@@ -245,13 +283,33 @@
             window.userRole = "user";
           }
         }
-        
+        // Hide sign in button
+        document.getElementById("loginButton").style.display = "none";
+        // Display profile card and update stats
         renderPlayerStats("profileCard");
         displayProfileCard(user);
+        // For roles that are privileged, also update and display user count.
+        if (["admin", "moderator", "owner"].includes(window.userRole)) {
+          updateUserCount();
+        }
+        // Optionally show any reward notifications
+        showRewardNotifications();
       } catch (err) {
         console.error("Login failed:", err);
       }
     };
+    
+    async function updateUserCount() {
+      try {
+        const count = await getUserCount();
+        const countElem = document.getElementById("userCount");
+        if (countElem) {
+          countElem.textContent = "Users Online: " + count;
+        }
+      } catch (err) {
+        console.error("Error fetching user count:", err);
+      }
+    }
     
     function displayProfileCard(user) {
       const card = document.getElementById("profileCard");
@@ -260,7 +318,11 @@
         <h3>${user.displayName}</h3>
         <p>${user.email}</p>
       `;
-      // If the user is the Owner, display additional pricing controls
+      // If the user is privileged (admin, moderator, owner), include a user count display
+      if (["admin", "moderator", "owner"].includes(window.userRole)) {
+        html += `<p id="userCount">Users Online: Loading...</p>`;
+      }
+      // If the user is the Owner, add Pricing Control Panel
       if (window.userRole === "owner") {
         html += `
           <div id="pricingControl">
@@ -288,38 +350,46 @@
     
     window.updateTicketPrice = function() {
       const price = document.getElementById("ticketPrice").value;
-      // Here, update your backend pricing mechanism. For now, just simulate.
-      alert("Ticket price has been updated to $" + price);
+      // Update pricing on your backend via your payment server
+      alert("Ticket price updated to $" + price);
     };
     
-    /* 
-       startNewGame(): This function demonstrates how index.html dynamically connects 
-       to your conqueror-games repository. When the "Start New Game" button is clicked,
-       it uses dynamic module import to load the game engine file from the external repository.
-       
-       Modify the URL below ("https://yourusername.github.io/conqueror-games/game-engine.js")
-       to point to the actual location where your game engine is hosted (via GitHub Pages or similar).
-    */
+    // Function to load external game files and start a new game.
     window.startNewGame = async function() {
       if (!window.currentUser) {
         alert("Please sign in to start a game.");
         return;
       }
-      const gameEngineUrl = "https://github.com/yunus662/Conqueror-games/blob/revised/engine.js"; // Update accordingly
-      
+      // Replace with the actual URL where your game engine is deployed (e.g., on GitHub Pages)
+      const gameEngineUrl = "https://yourusername.github.io/conqueror-games/game-engine.js";
       try {
         const gameModule = await import(gameEngineUrl);
-        // Assume the game engine has a method startGame() that takes the current user data.
         gameModule.startGame({
           user: window.currentUser,
           role: window.userRole,
-          lobbyId: "newLobby" // Use your own logic to determine the lobby ID.
+          lobbyId: "newLobby" // Modify according to real lobby selection logic.
         });
       } catch (err) {
         console.error("Error starting game:", err);
         alert("Failed to load game files.");
       }
     };
+    
+    // Payment handler: calls makePayment from payment.js when triggered by the Payment Center page.
+    window.makePaymentHandler = async function() {
+      const amount = document.getElementById("paymentAmount").value;
+      if (!amount || amount <= 0) {
+        alert("Please enter a valid amount.");
+        return;
+      }
+      try {
+        await makePayment(amount);
+      } catch (err) {
+        console.error("Payment failed:", err);
+        alert("Payment failed: " + err);
+      }
+    };
+    
   </script>
 </body>
 </html>
