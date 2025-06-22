@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Center - Conquerest</title>
+  <style>
+    :root {
+      --bg-dark: #141416;
+      --bg-medium: #1f1f22;
+      --text-light: #f0f0f0;
+      --accent: #e74c3c;
+      --accent-dark: #c0392b;
+      --primary-font: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      margin: 0;
+      font-family: var(--primary-font);
+      background: var(--bg-dark);
+      color: var(--text-light);
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    /* Navigation Bar */
+    nav {
+      background: var(--bg-medium);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--accent);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+    }
+    nav li a {
+      color: var(--text-light);
+      font-size: 1rem;
+    }
+    nav li a:hover {
+      color: var(--accent);
+    }
+    .main-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+    .payment-form {
+      background: var(--bg-medium);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      display: inline-block;
+      margin-top: 20px;
+    }
+    .payment-form label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+    .payment-form input {
+      padding: 0.75rem;
+      width: 100%;
+      max-width: 200px;
+      border: none;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+    .payment-form button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s ease;
+    }
+    .payment-form button:hover {
+      background: var(--accent-dark);
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      border-top: 2px solid var(--accent);
+      margin-top: 40px;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav>
+    <ul>
+      <li><a href="home.html">Home</a></li>
+      <li><a href="lobbies.html">Lobbies</a></li>
+      <li><a href="forum.html">Forum</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contacts.html">Contacts</a></li>
+      <li><a href="creator.html">Creator</a></li>
+      <li><a href="payment.html">Payment</a></li>
+      <!-- Admin and Owner Panel links will be displayed conditionally -->
+      <li id="adminTab" style="display:none;"><a href="admin.html">Admin Console</a></li>
+      <li id="ownerTab" style="display:none;"><a href="owner.html">Owner Panel</a></li>
+    </ul>
+  </nav>
+  
+  <!-- Main Content: Payment Form -->
+  <div class="main-container">
+    <h1>Payment Center</h1>
+    <p>Purchase game tickets to boost your empire.</p>
+    
+    <div class="payment-form">
+      <label for="paymentAmount">Amount (USD):</label>
+      <input type="number" id="paymentAmount" value="10" min="1" />
+      <button onclick="makePaymentHandler()">Buy Tickets</button>
+    </div>
+  </div>
+  
+  <!-- Footer -->
+  <footer>
+    &copy; 2025 Conquerest. All Rights Reserved.
+  </footer>
+  
+  <!-- JavaScript Section -->
+  <script type="module">
+    import { makePayment } from "./payment.js";
+
+    // Handler for processing payment; connects to payment server via payment.js
+    window.makePaymentHandler = async function() {
+      const amountEl = document.getElementById("paymentAmount");
+      const amount = parseFloat(amountEl.value);
+      if (!amount || amount <= 0) {
+        alert("Please enter a valid payment amount.");
+        return;
+      }
+      try {
+        await makePayment(amount);
+      } catch (err) {
+        console.error("Payment processing error:", err);
+        alert("Payment failed: " + err);
+      }
+    };
+  </script>
+</body>
+</html>
