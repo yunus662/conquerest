@@ -5,154 +5,202 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Conquerest - Command Your Empire</title>
   <style>
+    /* Root Variables */
     :root {
       --bg-dark: #141416;
       --bg-medium: #1f1f22;
-      --bg-light: #222;
+      --bg-light: #232323;
       --text-light: #f0f0f0;
       --accent: #e74c3c;
       --accent-dark: #c0392b;
-      --border-color: #2c2c2e;
+      --primary-font: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
-    /* Basic reset */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-family: var(--primary-font);
       background: var(--bg-dark);
       color: var(--text-light);
-      line-height: 1.6;
+      overflow-x: hidden;
     }
     a { text-decoration: none; color: inherit; }
     
     /* Navigation Bar */
-    #navbar {
+    nav {
       background: var(--bg-medium);
-      padding: 10px 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--accent);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    #navbar ul {
+    nav ul {
+      display: flex;
       list-style: none;
-      display: flex;
-      gap: 20px;
+      gap: 1.5rem;
     }
-    #navbar li {
+    nav li {
       cursor: pointer;
-      padding: 5px 10px;
-      transition: background 0.25s;
+      transition: color 0.3s ease;
     }
-    #navbar li:hover {
-      background: var(--accent);
-      color: #111;
+    nav li:hover {
+      color: var(--accent);
     }
-    #navbar .right {
+    nav .right {
       display: flex;
-      gap: 15px;
+      gap: 1rem;
       align-items: center;
     }
-    /* Profile Card (displayed after login) */
-    #profileDisplay {
-      background: var(--bg-light);
-      border: 1px solid var(--border-color);
-      padding: 10px 15px;
-      border-radius: 6px;
-      margin: 10px 30px;
+    
+    /* Hero Section */
+    header.hero {
+      background: url('https://source.unsplash.com/1920x1080/?war,military') center center/cover no-repeat;
+      height: 100vh;
+      position: relative;
+    }
+    header.hero::after {
+      content: "";
+      background: rgba(0, 0, 0, 0.65);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+    header.hero .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      top: 40%;
+      transform: translateY(-40%);
+    }
+    header.hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+    }
+    header.hero p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      text-shadow: 1px 1px 6px rgba(0,0,0,0.7);
+    }
+    /* Button Styling */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+    .btn:hover { transform: scale(1.03); }
+    /* Professional Google Sign In */
+    .btn-google {
+      background: linear-gradient(45deg, #ffffff, #e8e8e8);
+      color: #444;
+      border: 2px solid #ddd;
+    }
+    .btn-google:hover { background: #f1f1f1; }
+    /* Payment Button */
+    .btn-payment {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-payment:hover { background: var(--accent-dark); }
+    
+    /* Profile Card */
+    #profileCard {
       display: none;
+      background: var(--bg-light);
+      padding: 1rem;
+      border-radius: 6px;
+      margin: 1rem 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 1rem;
     }
-    #profileDisplay img {
+    #profileCard img {
       width: 60px;
       height: 60px;
       border-radius: 50%;
       object-fit: cover;
     }
-    #profileDisplay div { display: flex; flex-direction: column; }
-    #profileDisplay button {
+    #profileCard .info {
+      flex-grow: 1;
+    }
+    #profileCard button {
       background: var(--accent);
       border: none;
-      padding: 5px 10px;
+      padding: 0.5rem 1rem;
       border-radius: 4px;
+      color: #fff;
       cursor: pointer;
-      transition: background 0.25s;
     }
-    #profileDisplay button:hover { background: var(--accent-dark); color: #111; }
     
     /* Pages Container */
-    #pages { padding: 20px 30px; }
+    .pages {
+      padding: 2rem;
+    }
     .page { display: none; }
     .page.active { display: block; }
-    
-    /* Home Page (welcome message) */
-    #page-home {
-      text-align: center;
-      padding: 40px;
+    .card {
       background: var(--bg-medium);
-      border: 1px solid var(--border-color);
+      padding: 1.5rem;
+      border: 1px solid var(--accent);
       border-radius: 6px;
-      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      margin: 1rem 0;
     }
     
-    /* Lobbies Page */
-    #page-lobbies {
-      padding: 20px;
-    }
-    /* Container for lobby cards */
-    #lobbyList {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 20px;
-    }
+    /* Lobby Card Styling */
     .lobby-card {
-      background: #1d1d1f;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .lobby-card h3 { margin-top: 0; font-size: 1.5em; }
-    .lobby-card p { margin: 6px 0; color: #ccc; }
-    .lobby-card button {
-      margin-top: 15px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      padding: 10px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background 0.25s;
-    }
-    .lobby-card button:hover { background: var(--accent-dark); }
-    
-    /* Standard styling for Forum, About, Contacts, Creator pages */
-    .page h2 { margin-bottom: 15px; }
-    
-    /* Admin Console Page */
-    #page-admin {
       background: var(--bg-medium);
-      padding: 20px;
-      border: 1px solid var(--border-color);
+      padding: 1rem;
+      border: 1px solid var(--accent);
       border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      margin: 1rem 0;
     }
-    #repoFiles { margin-top: 15px; }
-    #repoFiles ul { list-style: none; padding-left: 0; }
-    #repoFiles li { padding: 5px 0; }
+    .lobby-card h3 { margin-bottom: 0.5rem; }
+    .lobby-card p { margin-bottom: 0.5rem; }
     
-    /* Update Notice (for non-admin users) */
-    #updateNotice {
-      background: var(--bg-medium);
-      padding: 20px;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
+    /* Payment Center Page */
+    #page-payment .payment-card {
+      max-width: 400px;
+      margin: 2rem auto;
       text-align: center;
-      margin-top: 20px;
-      display: none;
+      padding: 2rem;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
+    #page-payment input, 
+    #page-payment button {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    #page-payment input {
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
+    
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 1rem;
+      border-top: 1px solid var(--accent);
+      margin-top: 2rem;
+    }
+    
+    /* Admin Console Page (similar styling as others) */
+    #page-admin { background: var(--bg-medium); padding: 2rem; border-radius: 6px; }
     
     /* Shutdown Overlay */
     #shutdownOverlay {
@@ -170,59 +218,89 @@
 </head>
 <body>
   <!-- Navigation Bar -->
-  <nav id="navbar">
-    <ul id="navLeft">
+  <nav>
+    <ul>
       <li onclick="showPage('home')">Home</li>
       <li onclick="showPage('lobbies')">Lobbies</li>
       <li onclick="showPage('forum')">Forum</li>
       <li onclick="showPage('about')">About</li>
       <li onclick="showPage('contacts')">Contacts</li>
       <li onclick="showPage('creator')">Creator</li>
-      <li id="adminTab" style="display: none;" onclick="showPage('admin')">Admin Console</li>
+      <li onclick="showPage('payment')">Payment</li>
+      <li id="adminTab" style="display:none;" onclick="showPage('admin')">Admin Console</li>
     </ul>
     <div class="right">
-      <button id="loginButton" onclick="login()">Login with Google</button>
+      <button id="loginBtn" class="btn btn-google" onclick="login()">Sign in with Google</button>
     </div>
   </nav>
   
   <!-- Profile Card (appears after login) -->
-  <div id="profileDisplay"></div>
+  <div id="profileCard">
+    <img src="" alt="Profile Picture">
+    <div class="info">
+      <h3 id="profileName"></h3>
+      <p id="profileEmail"></p>
+    </div>
+    <button onclick="logout()">Logout</button>
+  </div>
   
   <!-- Pages Container -->
-  <div id="pages">
-    <!-- Home Page -->
+  <div class="pages">
+    <!-- Home Page with Hero -->
     <div id="page-home" class="page active">
-      <h2>Welcome to Conquerest</h2>
-      <p id="statusMessage">Please log in to access full features.</p>
+      <header class="hero">
+        <div class="hero-content">
+          <h1>Conquerest</h1>
+          <p>Command Your Empire. Lead Your Forces into Battle.</p>
+          <button class="btn btn-google" onclick="login()">Sign in with Google</button>
+        </div>
+      </header>
     </div>
+    
     <!-- Lobbies Page -->
     <div id="page-lobbies" class="page">
       <h2>Active Lobbies</h2>
-      <div id="lobbyList">
-        <p id="lobbyStatus" style="color: #999; text-align: center;">Loading lobbies...</p>
+      <div id="lobbyContainer">
+        <!-- Lobby cards will be spawned here dynamically -->
       </div>
     </div>
+    
     <!-- Forum Page -->
     <div id="page-forum" class="page">
       <h2>Forum</h2>
-      <p>Connect with fellow commanders and discuss strategies.</p>
+      <p>Engage with fellow commanders and discuss strategies.</p>
     </div>
+    
     <!-- About Page -->
     <div id="page-about" class="page">
       <h2>About</h2>
       <p>Conquerest is a global strategy game where every decision shapes your destiny.</p>
     </div>
+    
     <!-- Contacts Page -->
     <div id="page-contacts" class="page">
       <h2>Contacts</h2>
-      <p>For assistance, email support@conquerest.com.</p>
+      <p>For support, email support@conquerest.com.</p>
     </div>
+    
     <!-- Creator Page -->
     <div id="page-creator" class="page">
       <h2>Creator</h2>
-      <p>Developed by visionaries committed to redefining strategy gaming.</p>
+      <p>Developed by a visionary team dedicated to redefining strategy gaming.</p>
     </div>
-    <!-- Admin Console Page (only for admins) -->
+    
+    <!-- Payment Center Page -->
+    <div id="page-payment" class="page">
+      <h2>Payment Center</h2>
+      <div class="payment-card card">
+        <h3>Purchase Game Credits</h3>
+        <p>Buy tickets to boost your empire.</p>
+        <input id="paymentAmount" type="number" placeholder="Enter amount" min="1">
+        <button class="btn btn-payment" onclick="makePayment()">Buy Tickets</button>
+      </div>
+    </div>
+    
+    <!-- Admin Console Page -->
     <div id="page-admin" class="page">
       <h2>Admin Console</h2>
       <button onclick="shutdownGame()">Shutdown Game</button>
@@ -239,112 +317,91 @@
     </div>
   </div>
   
+  <!-- Footer -->
+  <footer>
+    &copy; 2025 Conquerest. All Rights Reserved.
+  </footer>
+  
   <!-- Shutdown Overlay -->
   <div id="shutdownOverlay">
     <h1>Game Shutdown</h1>
     <p>The game is currently shut down for maintenance.</p>
     <div id="repoFilesOverlay"></div>
-    <button onclick="restartGame()" 
-            style="padding: 10px 20px; margin-top:20px; background: var(--accent); border: none; color: #fff; border-radius: 4px; cursor: pointer;">
-      Restart Game
-    </button>
+    <button class="btn btn-payment" onclick="restartGame()">Restart Game</button>
   </div>
   
-  <!-- Firebase & Custom Scripts -->
+  <!-- Scripts -->
   <script type="module">
-    import { loginWithGoogle, renderPlayerStats } from "./player-system.js";
-    // We no longer use Firestore for lobbies—instead, load from conqueror-games repo
-    // via the AllOrigins proxy.
+    import { loginWithGoogle, logout as fbLogout, renderPlayerStats } from "./player-system.js";
+    // Import reward center or payment functionality as needed
+    
+    // Global variables for user and current role
     window.currentUser = null;
-    window.userRole = "guest"; // values: guest, user, moderator, admin
+    window.userRole = "guest"; // possible values: guest, user, moderator, admin
     
     window.login = async function() {
       try {
         const user = await loginWithGoogle();
         window.currentUser = user;
-        document.getElementById("loginButton").style.display = "none";
-        renderProfileCard(user);
-        
+        document.getElementById("loginBtn").style.display = "none";
+        displayProfile(user);
         // Grant admin privileges for these emails:
         const adminEmails = ["imyaay234@gmail.com", "woowarey@gmail.com"];
         if (adminEmails.includes(user.email)) {
           window.userRole = "admin";
-          document.getElementById("adminTab").style.display = "inline-block";
-          document.getElementById("statusMessage").textContent = "Admin access granted. Unlimited tickets assigned.";
+          document.getElementById("adminTab").style.display = "inline";
         } else {
           window.userRole = "user";
-          document.getElementById("statusMessage").textContent = "Game is undergoing updates. Please check back later.";
         }
-        
-        // Optionally update player stats in the profile card
-        renderPlayerStats("profileDisplay");
+        // Optionally update player stats into the profile card
+        renderPlayerStats("profileCard");
       } catch (err) {
         console.error("Login failed:", err);
       }
     };
     
-    function renderProfileCard(user) {
-      const container = document.getElementById("profileDisplay");
-      container.innerHTML = `
-        <img src="${user.photoURL}" alt="Profile Picture" />
-        <div>
-          <h3>${user.displayName}</h3>
-          <p>${user.email}</p>
+    function displayProfile(user) {
+      const profile = document.getElementById("profileCard");
+      profile.innerHTML = `
+        <img src="${user.photoURL}" alt="Profile Picture">
+        <div class="info">
+          <h3 id="profileName">${user.displayName}</h3>
+          <p id="profileEmail">${user.email}</p>
         </div>
         <button onclick="logout()">Logout</button>
       `;
-      container.style.display = "flex";
+      profile.style.display = "flex";
     }
     
     window.logout = async function() {
-      // Assume Firebase signOut is implemented in player-system.js
+      await fbLogout(); // Firebase signOut
       window.currentUser = null;
       window.userRole = "guest";
-      document.getElementById("loginButton").style.display = "inline-block";
-      document.getElementById("profileDisplay").style.display = "none";
+      document.getElementById("loginBtn").style.display = "inline-block";
+      document.getElementById("profileCard").style.display = "none";
       document.getElementById("adminTab").style.display = "none";
-      document.getElementById("statusMessage").textContent = "";
-      hideAllPages();
       showPage("home");
     };
     
-    function hideAllPages() {
-      const pages = document.getElementsByClassName("page");
-      for (let p of pages) { p.classList.remove("active"); }
+    function showPage(page) {
+      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+      document.getElementById("page-" + page).classList.add("active");
+      if (page === "lobbies") { loadLobbies(); }
     }
     
-    window.showPage = function(page) {
-      hideAllPages();
-      document.getElementById("page-" + page).classList.add("active");
-      if (page === "lobbies") { displayLobbies(); }
-    };
-    
-    // Lobbies: Fetch lobby data from the conqueror-games repository
-    async function fetchLobbyData() {
-      // Assume your repository has a file "lobbies.json" at its root
+    async function loadLobbies() {
+      const container = document.getElementById("lobbyContainer");
+      container.innerHTML = "";
+      // Fetch lobby data from conqueror-games repository "lobbies.json" using AllOrigins proxy
       const repoUrl = "https://github.com/yunus662/Conqueror-games/blob/revised/lobbies.json";
       const proxyUrl = "https://api.allorigins.hexocode.repl.co/get?disableCache=true&url=";
-      const fullUrl = proxyUrl + encodeURIComponent(repoUrl);
       try {
-        const response = await fetch(fullUrl);
+        const response = await fetch(proxyUrl + encodeURIComponent(repoUrl));
         if (!response.ok) throw new Error("Failed to fetch lobby data");
         const data = await response.json();
-        const lobbyData = JSON.parse(data.contents);
-        return lobbyData;
-      } catch (err) {
-        console.error("Error in fetchLobbyData:", err);
-        return [];
-      }
-    }
-    
-    async function displayLobbies() {
-      const container = document.getElementById("lobbyList");
-      const statusEl = document.getElementById("lobbyStatus");
-      container.innerHTML = "";
-      try {
-        const lobbies = await fetchLobbyData();
+        const lobbies = JSON.parse(data.contents);
         if (!lobbies.length) {
-          statusEl.textContent = "No active lobbies.";
+          container.innerHTML = "<p style='text-align:center;'>No active lobbies available.</p>";
           return;
         }
         lobbies.forEach(lobby => {
@@ -355,47 +412,55 @@
             <p><strong>Start:</strong> ${new Date(lobby.startTime).toLocaleString()}</p>
             <p><strong>Year:</strong> ${lobby.inGameYear}</p>
             <p><strong>Players:</strong> ${lobby.playersCount}</p>
-            <button onclick="window.joinLobby('${lobby.id}')">Join Lobby</button>
+            <button onclick="joinLobby('${lobby.id}')">Join Lobby</button>
           `;
           container.appendChild(card);
         });
       } catch (err) {
-        statusEl.textContent = "Failed to load lobbies.";
-        console.error("Error in displayLobbies:", err);
+        container.innerHTML = "<p style='text-align:center; color:var(--accent);'>Error loading lobbies.</p>";
+        console.error("Error in loadLobbies:", err);
       }
     }
     
-    // Define joinLobby to navigate to game.html
     window.joinLobby = function(lobbyId) {
       window.location.href = "game.html?lobby=" + encodeURIComponent(lobbyId);
+    };
+    
+    // Payment System Functionality
+    window.makePayment = function() {
+      const amount = document.getElementById("paymentAmount").value;
+      if (!amount || amount <= 0) {
+        alert("Please enter a valid amount.");
+        return;
+      }
+      // Replace with actual payment gateway integration (e.g., Stripe)
+      alert("Payment successful! " + amount + " tickets purchased.");
     };
     
     // Admin Console functions
     window.shutdownGame = function() {
       document.getElementById("shutdownOverlay").style.display = "block";
-      document.getElementById("pages").style.display = "none";
+      document.querySelector(".pages").style.display = "none";
       listRepoFiles(true);
     };
     
     window.restartGame = function() {
       document.getElementById("shutdownOverlay").style.display = "none";
-      document.getElementById("pages").style.display = "block";
+      document.querySelector(".pages").style.display = "block";
     };
     
     window.assignRole = function() {
       const email = document.getElementById("roleEmail").value;
       const role = document.getElementById("roleSelect").value;
       alert(`Role '${role}' assigned to ${email}.`);
-      // Implement backend role update here
+      // Backend role assignment logic goes here
     };
     
-    // Fetch repository file listing via AllOrigins proxy (for admin console)
     window.listRepoFiles = async function(isOverlay = false) {
       const repoUrl = "https://github.com/yunus662/Conqueror-games/tree/revised";
       const proxyUrl = "https://api.allorigins.hexocode.repl.co/get?disableCache=true&url=";
-      const fullUrl = proxyUrl + encodeURIComponent(repoUrl);
       try {
-        const response = await fetch(fullUrl);
+        const response = await fetch(proxyUrl + encodeURIComponent(repoUrl));
         if (!response.ok) throw new Error("Failed to fetch repository contents");
         const data = await response.json();
         const files = JSON.parse(data.contents);
@@ -417,7 +482,6 @@
       }
     }
     
-    // Show Home page by default on load
     window.addEventListener("load", function() {
       showPage("home");
     });
